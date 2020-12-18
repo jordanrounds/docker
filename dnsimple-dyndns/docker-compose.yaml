@@ -1,0 +1,31 @@
+version: '3.7'
+services:
+  alpine:
+    build: .
+    container_name: "dnsimple-dyndns"
+    environment:
+      TZ: ${TZ}
+      DN_TOKEN: /run/secrets/token
+      DN_ACCOUNT: /run/secrets/account_id
+      DN_ZONE: /run/secrets/zone_id
+      DN_RECORD: /run/secrets/record_id
+      DN_WILDCARD: /run/secrets/wildcard_record_id
+    image: "dnsimple-dyndns"
+    restart: unless-stopped
+    secrets:
+      - token
+      - account_id
+      - zone_id
+      - record_id
+      - wildcard_record_id
+secrets:
+  token:
+    file: ${SECRETS}/dnsimple.token
+  account_id:
+    file: ${SECRETS}/dnsimple.account_id
+  zone_id:
+    file: ${SECRETS}/dnsimple.zone_id
+  record_id:
+    file: ${SECRETS}/dnsimple.record_id
+  wildcard_record_id:
+    file: ${SECRETS}/dnsimple.wildcard_record_id

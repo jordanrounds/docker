@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  mariadb:
+    container_name: "mariadb"
+    image: mariadb:10.5.2-bionic
+    environment:
+      TZ: ${TZ}
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/root
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD_FILE: /run/secrets/user
+    restart: unless-stopped
+    volumes:
+     - mysql:/var/lib/mysql
+    secrets:
+      - root
+      - user
+volumes:
+  mysql:
+    name: mariadb_mysql
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/mariadb/mysql
+secrets:
+  root:
+    file: ${SECRETS}/mariadb.password.root
+  user:
+    file: ${SECRETS}/mariadb.password.hass

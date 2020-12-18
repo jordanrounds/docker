@@ -1,0 +1,26 @@
+version: '3.7'
+services:
+  flexget:
+    container_name: "flexget"
+    environment:
+      TZ: ${TZ}
+      PGID: 999
+      PUID: 1000
+    image: "derbenni/docker-flexget"
+    restart: unless-stopped
+    ports:
+      - "5050:5050"
+    volumes:
+      - "config:/config"
+      - "downloads:/downloads"
+volumes:
+  config:
+    name: flexget_config
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/flexget/config
+  downloads:
+    name: flexget_download
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${DOWNLOAD}

@@ -1,0 +1,36 @@
+version: "3.7"
+services:
+  letsencrypt:
+    image: linuxserver/letsencrypt
+    container_name: nginx-letsencrypt
+    cap_add:
+      - NET_ADMIN
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ}
+      FILE__URL: /run/secrets/url
+      SUBDOMAINS: ${SUBDOMAINS}
+      VALIDATION: ${VALIDATION}
+      DNSPLUGIN: ${DNSPLUGIN} 
+      FILE__EMAIL: /run/secrets/email
+    secrets:
+      - url
+      - email
+    volumes:
+      -  config:/config
+    ports:
+      - 443:443
+      - 80:80
+    restart: unless-stopped
+volumes:
+  config:
+    name: nginx_letsencrypt
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/nginx/config
+secrets:
+  url:
+    file: ${SECRETS}/nginx.url
+  email:
+    file: ${SECRETS}/nginx.email

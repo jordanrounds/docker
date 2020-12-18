@@ -1,0 +1,22 @@
+#!/bin/sh
+
+TOKEN="cat $DN_TOKEN"                          # The API v2 OAuth token
+ACCOUNT_ID="cat $DN_ACCOUNT"                   # Replace with your account ID
+ZONE_ID="cat $DN_ZONE"                         # The zone ID is the name of the zone (or domain)
+RECORD_ID="cat $DN_RECORD"                     # Replace with the Record ID
+WILDCARD_RECORD_ID="cat $DN_WILDCARD"          # Replace with the Wildcard Record ID
+IP=`curl --ipv4 -s http://icanhazip.com/`      # Get our IP
+
+curl -v -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -H "Accept: application/json" \
+     -X "PATCH" \
+     -i "https://api.dnsimple.com/v2/$ACCOUNT_ID/zones/$ZONE_ID/records/$RECORD_ID" \
+     -d "{\"content\":\"$IP\"}"
+
+curl -v -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -H "Accept: application/json" \
+     -X "PATCH" \
+     -i "https://api.dnsimple.com/v2/$ACCOUNT_ID/zones/$ZONE_ID/records/$WILDCARD_RECORD_ID" \
+     -d "{\"content\":\"$IP\"}"

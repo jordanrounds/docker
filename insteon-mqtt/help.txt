@@ -1,0 +1,54 @@
+usage: insteon-mqtt [-h]
+                    config.yaml
+                    {start,refresh-all,sync-all,import-scenes-all,get-engine-all,factory-reset,get-devices,linking,join,refresh,get-flags,set-flags,get-engine,get-model,on,set,off,up,down,scene,pair,db-add,db-delete,set-button-led,print-db,sync,import-scenes}
+                    ...
+
+Insteon<->MQTT tool
+
+positional arguments:
+  config.yaml           Configuration file to use.
+  {start,refresh-all,sync-all,import-scenes-all,get-engine-all,factory-reset,get-devices,linking,join,refresh,get-flags,set-flags,get-engine,get-model,on,set,off,up,down,scene,pair,db-add,db-delete,set-button-led,print-db,sync,import-scenes}
+                        Command help
+    start               Start the Insteon<->MQTT server.
+    refresh-all         Call refresh all on the devices in the configuration.
+    sync-all            Call sync on all the devices in the configuration.
+    import-scenes-all   Call import-scenes on all the devices in the
+                        configuration.
+    get-engine-all      Call get-engine on the devices in the configuration.
+    factory-reset       Perform a remote factory reset. Currently only
+                        supported on the modem.
+    get-devices         Return a list of all the devices that the modem knows
+                        about.
+    linking             Turn on device or modem linking. This is the same as
+                        holding the modem set button for 3 seconds.
+    join                Join the device to the modem. Allows the modem to talk
+                        to the device.
+    refresh             Refresh device/modem state and all link database.
+    get-flags           Get device operating flags.
+    set-flags           Set device operating flags.
+    get-engine          Get device engine version.
+    get-model           Get device model information.
+    on                  Turn a device on.
+    set                 Turn a device to specific level.
+    off                 Turn a device off.
+    up                  Increments a dimmer up.
+    down                Decrements a dimmer up.
+    scene               Simulate a scene command.
+    pair                Pair a device with the modem.
+    refresh             Refresh device/modem state and all link database.
+    db-add              Add the device/modem as the controller or responder of
+                        another device. The addr1 input sets the device to
+                        modify. Also adds the corresponding entry on the
+                        linked device unless --one-way is set.
+    db-delete           Delete an entry in the device/modem's all link
+                        database with the input address, group, and mode. Also
+                        deletes the corresponding entry on the linked device
+                        unless --one-way is set.
+    set-button-led      Set the button LED state for a KeyPadLinc.
+    print-db            Print the current device database
+    sync                Sync the defined scenes with device db
+    import-scenes       Import all of the scenes defined on the device into
+                        the scenes config file.
+
+optional arguments:
+  -h, --help            show this help message and exit

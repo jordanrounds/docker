@@ -1,0 +1,39 @@
+version: '3.7'
+services:
+  ring-mqtt:
+    build: .
+    container_name: 'ring-mqtt'
+    image: "tsightler/ring-mqtt:latest-secrets"
+    environment:
+      TZ: ${TZ}
+      # -----------------------------------------
+      # COMMENTED OUT LINES ARE THE DEFAULT VALUES
+      # ------------------------------------------
+      MQTTHOST: ${MQTTHOST} 
+      #MQTTPORT: 1883
+      #MQTTRINGTOPIC: ring
+      #MQTTHASSTOPIC: homeassistant/status
+      MQTTUSER: ${MQTTUSER}
+      MQTTPASSWORD_FILE: /run/secrets/password
+      RINGTOKEN_FILE: /run/secrets/token
+      #ENABLECAMERAS: false
+      #ENABLEMODES: false
+      #RINGLOCATIONIDS:
+      DEBUG: 'ring-mqtt'
+    restart: unless-stopped
+    volumes:
+      - data:/etc/ring-mqtt
+    secrets:
+      - password
+      - token
+volumes:
+  data:
+    name: ring-mqtt_data
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/ring-mqtt/data
+secrets:
+  password:
+    file: ${SECRETS}/mosquitto.password.ring
+  token:
+    file: ${SECRETS}/ring-mqtt.token

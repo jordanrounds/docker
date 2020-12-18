@@ -1,0 +1,35 @@
+version: '3.7'
+services:
+  plex:
+    container_name: plex
+    image: plexinc/pms-docker
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      PLEX_UID: 0
+      PLEX_GID: 0
+      FILE__PLEX_CLAIM: /run/secrets/claim
+    network_mode: host
+    volumes:
+      - "config:/config"
+      - "transcode:/transcode"
+      - "media:/data"
+volumes:
+  config:
+    name: plex_config
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/plex/config
+  transcode:
+    name: plex_transcode
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/plex/transcode
+  media:
+    name: plex_media
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${MEDIA}
+secrets:
+  claim:
+    file: ${SECRETS}/plex.claim

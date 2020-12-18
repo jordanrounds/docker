@@ -1,0 +1,39 @@
+version: '3.7'
+services:
+  mosquitto:
+    build: .
+    container_name: "mosquitto"
+    environment:
+      TZ: ${TZ}
+      MOSQUITTO_USERNAME: ${MOSQUITTO_USERNAME}
+      MOSQUITTO_PASSWORD_FILE: /run/secrets/mos
+    image: "eclipse-mosquitto:1.6.9-auth-secrets"
+    restart: unless-stopped
+    secrets:
+      - mos
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - "config:/mosquitto/config"
+      - "log:/mosquitto/log"
+      - "data:/mosquitto/data"
+volumes:
+  config:
+    name: mosquitto_config
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/mosquitto/config
+  log:
+    name: mosquitto_log
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/mosquitto/log
+  data:
+    name: mosquitto_data
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/mosquitto/data
+secrets:
+  mos:
+    file: ${SECRETS}/mosquitto.password.mos

@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  inseon-mqtt:
+    container_name: 'insteon-mqtt'
+    environment:
+      TZ: ${TZ}
+    image: larizzo/insteon-mqtt
+    restart: unless-stopped
+    devices:
+      - ${DEVICE}:/dev/ttyUSB0
+    volumes:
+      - config:/config:rw
+      - data:/data:rw
+      - code:/opt/insteon-mqtt/insteon_mqtt
+volumes:
+  config:
+    name: insteon-mqtt_config
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/insteon-mqtt/config
+  data:
+    name: insteon-mqtt_data
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/insteon-mqtt/data
+  code:
+    name: insteon-mqtt_code
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/insteon-mqtt/code

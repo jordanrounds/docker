@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  heimdall:
+    image: linuxserver/heimdall
+    container_name: heimdall
+    environment:
+      - TZ=${TZ}
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - "config:/config"
+    ports:
+      - 1080:80
+      - 1043:443
+    restart: unless-stopped
+volumes:
+  config:
+    name: heimdall_config
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/heimdall/config

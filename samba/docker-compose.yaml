@@ -1,0 +1,64 @@
+version: '3.7'
+services:
+  samba:
+    build: .
+    container_name: "samba"
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    environment:
+      TZ: ${TZ} 
+      TINI_SUBREAPER:
+      NMBD: ${NMBD}
+      USER_FILE: /run/secrets/user
+      SHARE: ${SHARE}
+      USERID: ${USERID}
+      GROUPID: ${GROUPID}
+      WORKGROUP: ${WORKGROUP}
+    secrets:
+      - user
+    network_mode: "host"
+    ports:
+      - "137:137/udp" # required to advertise shares (NMBD)
+      - "138:138/udp" # required to advertise shares (NMBD)
+      - "139:139/tcp" # default smb port
+      - "445:445/tcp" # default smb port
+    read_only: false
+    tmpfs:
+      - /tmp
+    volumes:
+      - "/home/shares/docker:/home/shares/docker:z"
+      - "log:/var/log/samba"
+      - "etc:/etc"
+      - "run:/run/samba"
+      - "cache:/var/cache/samba"
+      - "lib:/var/lib/samba"
+volumes:
+  log:
+    name: samba_log
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/samba/log
+  etc:
+    name: samba_etc
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/samba/etc
+  run:
+    name: samba_run
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/samba/run
+  cache:
+    name: samba_cache
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/samba/cache
+  lib:
+    name: samba_lib
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LOCAL_PERSIST}/samba/lib
+secrets:
+  user:
+    file: ${SECRETS}/samba.user
