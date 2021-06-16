@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 ENVIRONMENT="/etc/environment"
-DOCKER_ROOT="/home/docker"
+DOCKER_ROOT="/home/jordan/Docker"
 LOCAL_PERSIST="$DOCKER_ROOT/.local-persist"
 SECRETS="$DOCKER_ROOT/.secrets"
 TIMEZONE="America/Los_Angeles"
@@ -12,7 +12,8 @@ echo 'This script will setup and configure your environment for the docker conta
 echo 'Would you like to continue?'
 read -p 'y/n: '
 
-if [ ${REPLY} = 'n' ]; then
+if [ ${REPLY} = 'n' ]
+then
   echo 'Aborting'
   exit 1
 fi
@@ -32,7 +33,8 @@ mkdir -p $SECRETS
 echo "Would you like to add the environment variables to $ENVIRONMENT?"
 read -p 'y/n: '
 
-if [ ${REPLY} = 'y' ]; then
+if [ ${REPLY} = 'y' ]
+then
   echo "LOCAL_PERSIST=\"$LOCAL_PERSIST\"" >> $ENVIRONMENT
   echo "SECRETS=\"$SECRETS\"" >> $ENVIRONMENT
   echo "TZ=\"$TIMEZONE\"" >> $ENVIRONMENT
@@ -43,7 +45,8 @@ echo
 echo 'Would you like to add the group docker and add it to your user?'
 read -p 'y/n: '
 
-if [ ${REPLY} = 'y' ]; then
+if [ ${REPLY} = 'y' ]
+then
   groupadd docker
   usermod -aG docker $USER
 fi
@@ -53,7 +56,8 @@ echo
 echo 'Would you like to enable Docker to start on boot?'
 read -p 'y/n: '
 
-if [ ${REPLY} = 'y' ]; then
+if [ ${REPLY} = 'y' ]
+then
   systemctl enable docker
 fi
 
@@ -63,7 +67,8 @@ echo
 echo 'Would you like to install the Local Persist Docker plugin?'
 read -p 'y/n: '
 
-if [ ${REPLY} = 'y' ]; then
+if [ ${REPLY} = 'y' ]
+then
   curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/scripts/install.sh | sudo bash
 fi
 
