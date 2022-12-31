@@ -5,6 +5,7 @@ RUN apk update
 RUN apk add curl
 RUN apk add bash
 RUN apk add tzdata
+RUN apk add bind-tools
 COPY dnsimple-updatedns /etc/periodic/15min/dnsimple-updatedns
 RUN chmod +x /etc/periodic/15min/dnsimple-updatedns
 RUN ./etc/periodic/15min/dnsimple-updatedns

@@ -33,4 +33,5 @@ if ( [ -z "${MQTTPASSWORD}" ] || [ -z "${RINGTOKEN}" ] ); then
   exit 1
 fi
 
-node /ring-mqtt/ring-mqtt.js
+. /app/ring-mqtt/scripts/entrypoint.sh
+#node /ring-mqtt/ring-mqtt.js

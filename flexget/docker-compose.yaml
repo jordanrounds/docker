@@ -6,7 +6,8 @@ services:
       TZ: ${TZ}
       PGID: 999
       PUID: 1000
-    image: "derbenni/docker-flexget"
+      FG_WEBUI_PASSWD: /run/secrets/password
+    image: "wiserain/flexget"
     restart: unless-stopped
     ports:
       - "5050:5050"
@@ -24,3 +25,6 @@ volumes:
     driver: local-persist
     driver_opts:
       mountpoint: ${DOWNLOAD}
+secrets:
+  pasword:
+    file: ${SECRETS}/flexget.password
