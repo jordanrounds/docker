@@ -1,10 +1,13 @@
 #!/bin/bash
 
 ENVIRONMENT="/etc/environment"
-DOCKER_ROOT="/home/jordan/Docker"
+DOCKER_ROOT="/home/docker"
 LOCAL_PERSIST="$DOCKER_ROOT/.local-persist"
 SECRETS="$DOCKER_ROOT/.secrets"
 TIMEZONE="America/Los_Angeles"
+NFS="/mnt/rounds-nas"
+PUID="1000"
+PGID="1000"
 
 echo 'Docker Initialization'
 echo
@@ -38,6 +41,10 @@ then
   echo "LOCAL_PERSIST=\"$LOCAL_PERSIST\"" >> $ENVIRONMENT
   echo "SECRETS=\"$SECRETS\"" >> $ENVIRONMENT
   echo "TZ=\"$TIMEZONE\"" >> $ENVIRONMENT
+  echo "DOCKER=\"$DOCKER_ROOT\"" >> $ENVIRONMENT
+  echo "PGID=\"$PGID\"" >> $ENVIRONMENT
+  echo "PUID=\"$PUID\"" >> $ENVIRONMENT
+  echo "NFS=\"$NFS\"" >> $ENVIRONMENT
 fi
 
 #Docker Group Setup

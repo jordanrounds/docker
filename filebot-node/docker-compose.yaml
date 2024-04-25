@@ -1,0 +1,21 @@
+services:
+  filebot-node:
+    container_name: filebot-node
+    image: rednoah/filebot:node
+    restart: unless-stopped
+    volumes:
+      - data:/data
+      - volume1:/volume1
+    ports:
+      - 5452:5452
+volumes:
+  data:
+    name: filebotnode_data
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LP_DATA}
+  volume1:
+    name: filebotnode_volume1
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${LP_VOLUME1}
