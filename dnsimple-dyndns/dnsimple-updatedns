@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TOKEN="cat $DN_TOKEN"			       # The API v2 OAuth token
+TOKEN="cat $DN_TOKEN"			            # The API v2 OAuth token
 ACCOUNT_ID="cat $DN_ACCOUNT"                   # Replace with your account ID
 ZONE_ID="cat $DN_ZONE"                         # The zone ID is the name of the zone (or domain)
 RECORD_ID="cat $DN_RECORD"                     # Replace with the Record ID

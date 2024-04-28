@@ -105,6 +105,7 @@ write_env() {
 start_container() {
   local app=$1
   newline
+  docker-compose down
   echo "Starting $app Container"
   docker-compose up --force-recreate --build -d
 }

@@ -1,30 +1,35 @@
 version: '3.7'
 services:
   flexget:
-    container_name: "flexget"
+    image: lscr.io/linuxserver/flexget:latest
+    container_name: flexget
     environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
       TZ: ${TZ}
-      PGID: 999
-      PUID: 1000
-      FG_WEBUI_PASSWD: /run/secrets/password
-    image: "wiserain/flexget"
-    restart: unless-stopped
-    ports:
-      - "5050:5050"
+      FG_LOG_LEVEL: info
+      FG_LOG_FILE: /config/flexget.log
+      FG_CONFIG_FILE: /config/config.yml
+      FILE__FG_WEBUI_PASSWORD: /run/secrets/password
     volumes:
-      - "config:/config"
-      - "downloads:/downloads"
+      - config:/config
+      - data:/data
+    secrets:
+      - password
+    ports:
+      - 5050:5050
+    restart: unless-stopped
 volumes:
   config:
     name: flexget_config
     driver: local-persist
     driver_opts:
-      mountpoint: ${LOCAL_PERSIST}/flexget/config
-  downloads:
-    name: flexget_download
+      mountpoint: ${LP_CONFIG}
+  data:
+    name: flexget_data
     driver: local-persist
     driver_opts:
-      mountpoint: ${DOWNLOAD}
+      mountpoint: ${DATA}
 secrets:
-  pasword:
+  password:
     file: ${SECRETS}/flexget.password

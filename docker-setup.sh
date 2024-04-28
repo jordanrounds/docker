@@ -3,6 +3,7 @@
 ENVIRONMENT="/etc/environment"
 DOCKER_ROOT="/home/docker"
 LOCAL_PERSIST="$DOCKER_ROOT/.local-persist"
+DATA="$DOCKER_ROOT/.data" # data stored to not be backed up
 SECRETS="$DOCKER_ROOT/.secrets"
 TIMEZONE="America/Los_Angeles"
 NFS="/mnt/rounds-nas"
@@ -28,6 +29,10 @@ mkdir -p $DOCKER_ROOT
 echo "Adding $LOCAL_PERSIST"
 echo
 mkdir -p $LOCAL_PERSIST
+
+echo "Adding $DATA"
+echo
+mkdir -p $DATA
 
 echo "Adding $SECRETS"
 echo
