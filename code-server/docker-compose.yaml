@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - FILE_PASSWORD=/run/secrets/password
+    volumes:
+      - config:/config
+      - homepage_config:/config/workspace/docker-volumes/homepage_config
+    ports:
+      - 8443:8443
+    restart: unless-stopped
+
+volumes:
+  config:
+    name: code-server_config
+  homepage_config:
+    external: true
+    name: homepage_config
+
+secrets:
+  password:
+    file: ${SECRETS}/code-server.password

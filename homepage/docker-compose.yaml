@@ -1,0 +1,16 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    ports:
+      - 3000:3000
+    volumes:
+      - config:/app/config:rw
+    restart: unless-stopped
+volumes:
+  config:
+    name: homepage_config

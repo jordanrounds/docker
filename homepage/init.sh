@@ -2,8 +2,8 @@
 
 source '../functions.sh'
 
-app="QBitTorrent"
-folder="qbittorrent"
+app="Homepage"
+folder="homepage"
 persist="${LOCAL_PERSIST}/${folder}"
 config="${persist}/config"
 

@@ -11,6 +11,7 @@ services:
     volumes:
       - config:/config
       - downloads:/downloads
+      - watch:/watch
     ports:
       - 8080:8080
       - 6881:6881
@@ -26,4 +27,9 @@ volumes:
     name: qbittorrent_downloads
     driver: local-persist
     driver_opts:
-      mountpoint: ${LP_DOWNLOADS}
+      mountpoint: ${DATA}/torrents/download
+  watch:
+    name: qbittorrent_watch
+    driver: local-persist
+    driver_opts:
+      mountpoint: ${DATA}/torrents/watch

@@ -1,4 +1,5 @@
 version: '3.7'
+
 services:
   flexget:
     image: lscr.io/linuxserver/flexget:latest
@@ -19,6 +20,7 @@ services:
     ports:
       - 5050:5050
     restart: unless-stopped
+
 volumes:
   config:
     name: flexget_config
@@ -30,6 +32,7 @@ volumes:
     driver: local-persist
     driver_opts:
       mountpoint: ${DATA}
+
 secrets:
   password:
     file: ${SECRETS}/flexget.password

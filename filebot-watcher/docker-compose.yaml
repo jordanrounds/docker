@@ -1,18 +1,16 @@
 services:
-  filebot-node:
-    container_name: filebot-node
-    image: rednoah/filebot:node
+  filebot:
+    container_name: filebot-watcher
+    image: rednoah/filebot:watcher
     restart: unless-stopped
     volumes:
       - data:/data
       - output:/volume1
-      - input:/input
-    ports:
-      - 5452:5452
-
+      - input/download:/input
+    command: ${COMMAND}
 volumes:
   data:
-    name: filebot-node_data
+    name: filebot-watcher_data
   output:
     name: nfs_test #nfs_media
     external: true
