@@ -12,6 +12,7 @@ services:
     volumes:
       - config:/config
       - homepage_config:/config/workspace/docker-volumes/homepage_config
+      - flexget_config:/config/workspace/docker-volumes/flexget_config
     ports:
       - 8443:8443
     restart: unless-stopped
@@ -22,6 +23,9 @@ volumes:
   homepage_config:
     external: true
     name: homepage_config
+  flexget_config:
+    external: true
+    name: flexget_config
 
 secrets:
   password:

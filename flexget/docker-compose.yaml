@@ -14,7 +14,7 @@ services:
       FILE__FG_WEBUI_PASSWORD: /run/secrets/password
     volumes:
       - config:/config
-      - data:/data
+      - downloads:/data
     secrets:
       - password
     ports:
@@ -22,16 +22,11 @@ services:
     restart: unless-stopped
 
 volumes:
-  config:
+  config: 
     name: flexget_config
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${LP_CONFIG}
-  data:
-    name: flexget_data
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${DATA}
+  downloads:
+    name: data_torrent
+    external: true
 
 secrets:
   password:
