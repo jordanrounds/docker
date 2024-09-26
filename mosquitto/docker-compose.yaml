@@ -1,39 +1,39 @@
-version: '3.7'
 services:
   mosquitto:
     build: .
-    container_name: "mosquitto"
+    image: eclipse-mosquitto-auth-secrets:2.0.18
+    container_name: mosquitto
     environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
       TZ: ${TZ}
       MOSQUITTO_USERNAME: ${MOSQUITTO_USERNAME}
-      MOSQUITTO_PASSWORD_FILE: /run/secrets/mos
-    image: "eclipse-mosquitto:1.6.9-auth-secrets"
+      MOSQUITTO_PASSWORD_FILE: /run/secrets/password
+      #OVERWRITE_CONFIG: true
     restart: unless-stopped
     secrets:
-      - mos
+      - password
     ports:
-      - "1883:1883"
-      - "9001:9001"
+      - 1883:1883
+      - 9001:9001
+    networks:
+      - backend
     volumes:
-      - "config:/mosquitto/config"
-      - "log:/mosquitto/log"
-      - "data:/mosquitto/data"
+     # - config:/mosquitto/config
+      - log:/mosquitto/log
+      - data:/mosquitto/data
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro #read only so that the container doesnt change permissions
 volumes:
-  config:
-    name: mosquitto_config
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${LOCAL_PERSIST}/mosquitto/config
   log:
     name: mosquitto_log
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${LOCAL_PERSIST}/mosquitto/log
   data:
     name: mosquitto_data
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${LOCAL_PERSIST}/mosquitto/data
+  # config:
+  #   name: mosquitto_config
 secrets:
-  mos:
+  password:
     file: ${SECRETS}/mosquitto.password.mos
+
+networks:
+  backend:
+    external: true

@@ -3,9 +3,6 @@
 echo
 echo "Mosquitto Container Init"
 echo
-echo "Creating link to Mosquitto data"
-echo
-ln -sf $LOCAL_PERSIST/mosquitto persist-data
 
 if ! [[ -f .env ]]
 then
