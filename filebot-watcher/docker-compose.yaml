@@ -3,16 +3,21 @@ services:
     container_name: filebot-watcher
     image: rednoah/filebot:watcher
     restart: unless-stopped
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      SETTLE_DOWN_TIME: 300
     volumes:
       - data:/data
-      - output:/volume1
-      - input/download:/input
+      - input:/input
+      - output:/output
     command: ${COMMAND}
 volumes:
   data:
     name: filebot-watcher_data
   output:
-    name: nfs_test #nfs_media
+    name: nfs_media
     external: true
   input:
     name: data_torrent
