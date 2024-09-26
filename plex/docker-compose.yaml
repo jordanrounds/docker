@@ -1,35 +1,30 @@
-version: '3.7'
 services:
   plex:
+    image: lscr.io/linuxserver/plex:latest
     container_name: plex
-    image: plexinc/pms-docker
-    restart: unless-stopped
-    environment:
-      TZ: ${TZ}
-      PLEX_UID: 0
-      PLEX_GID: 0
-      FILE__PLEX_CLAIM: /run/secrets/claim
     network_mode: host
+    devices:
+      - /dev/dri:/dev/dri #hardware acceleration
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - VERSION=docker
+      - PLEX_LOG_DEBUG=1
+      - FILE__PLEX_CLAIM=/run/secrets/claim
+      #- FILE__PLEX_CLAIM=/run/secrets/claim
     volumes:
-      - "config:/config"
-      - "transcode:/transcode"
-      - "media:/data"
+      - config:/config
+      - media:/media
+    restart: unless-stopped
+
 volumes:
   config:
     name: plex_config
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${LOCAL_PERSIST}/plex/config
-  transcode:
-    name: plex_transcode
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${LOCAL_PERSIST}/plex/transcode
   media:
-    name: plex_media
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${MEDIA}
+    name: nfs_media
+    external: true
+
 secrets:
   claim:
     file: ${SECRETS}/plex.claim
