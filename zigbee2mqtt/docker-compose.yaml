@@ -1,0 +1,26 @@
+services:
+  zigbee2mqtt:
+    image: koenkk/zigbee2mqtt:1.40.1
+    container_name: zigbee2mqtt
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      ZIGBEE2MQTT_DATA: /app/data/data # lets us write to data/data as 1000:1000, data is owned by root
+    user: ${PUID}:${PGID}
+    volumes:
+      - data:/app/data
+    ports:
+      - 8383:8080
+    networks:
+      - backend
+
+volumes:
+  data:
+    name: zigbee2mqtt_data
+    external: true
+
+networks:
+  backend:
+    external: true
