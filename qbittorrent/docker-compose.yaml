@@ -10,8 +10,10 @@ services:
       TORRENTING_PORT: 6881
     volumes:
       - config:/config
-      - downloads:/downloads
-      - watch:/watch
+      - torrent:/torrent
+      - themes:/themes
+    networks:
+      - frontend
     ports:
       - 8080:8080
       - 6881:6881
@@ -20,16 +22,11 @@ services:
 volumes:
   config:
     name: qbittorrent_config
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${LP_CONFIG}
-  downloads:
-    name: qbittorrent_downloads
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${DATA}/torrents/download
-  watch:
-    name: qbittorrent_watch
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${DATA}/torrents/watch
+  torrent:
+    name: data_torrent
+    external: true
+  themes:
+    name: qbittorrent_themes
+networks:
+  frontend:
+    external: true
