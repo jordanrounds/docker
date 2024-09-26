@@ -5,7 +5,6 @@ services:
     container_name: "node-red"
     environment:
       TZ: ${TZ}
-    image: "nodered/node-red"
     restart: unless-stopped
     ports:
       - "1880:1880"
@@ -14,6 +13,3 @@ services:
 volumes:
   data:
     name: node-red_data
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${LOCAL_PERSIST}/node-red/data

@@ -7,10 +7,16 @@ services:
       PGID: ${PGID}
       TZ: ${TZ}
     ports:
-      - 3000:3000
+      - 3001:3000
     volumes:
       - config:/app/config:rw
+    networks:
+      - frontend
     restart: unless-stopped
 volumes:
   config:
     name: homepage_config
+
+networks:
+  frontend:
+    external: true
