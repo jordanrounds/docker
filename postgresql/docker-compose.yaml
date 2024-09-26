@@ -1,0 +1,41 @@
+services:
+  postgresql:
+    image: postgres:16.4
+    container_name: postgresql
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD_FILE: /run/secrets/password
+      PGDATA: /var/lib/postgresql/data/pgdata  # Directory for database data
+    volumes:
+      - data:/var/lib/postgresql/data
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf  # config
+      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf # client authenticaiton config
+    secrets:
+      - password
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+    # healthcheck:
+    #   test: ["CMD-SHELL", "pg_isready -U homeassistant"]
+    #   interval: 30s
+    #   timeout: 5s
+    #   retries: 3
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+
+volumes:
+  data:
+    name: postgresql_data
+
+secrets:
+  password:
+    file: ${SECRETS}/postgress.password.ha
+
+networks:
+  backend:
+    external: true
