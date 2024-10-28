@@ -1,0 +1,65 @@
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - socket-proxy
+      - frontend
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      DNSIMPLE_OAUTH_TOKEN_FILE: /run/secrets/dnsimple_oauth_token
+    secrets:
+      - dnsimple_oauth_token
+      - traefik_dashboard_credentials
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./traefik.yml:/traefik.yml:ro
+      - ./config.yml:/config/config.yml:ro
+      - letsencrypt:/letsencrypt
+    labels:
+      - "traefik.enable=true"
+      
+      # HTTP Router for Redirection
+      - "traefik.http.routers.traefik-http.rule=Host(`traefik.in.rounds.house`)"
+      - "traefik.http.routers.traefik-http.entrypoints=http"
+      - "traefik.http.routers.traefik-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      
+      # HTTPS Router for Traefik Dashboard
+      - "traefik.http.routers.traefik.rule=Host(`traefik.in.rounds.house`)"
+      - "traefik.http.routers.traefik.entrypoints=https"
+      - "traefik.http.routers.traefik.tls=true"
+      - "traefik.http.routers.traefik.tls.certresolver=dnsimple"
+      - "traefik.http.routers.traefik.tls.domains[0].main=in.rounds.house"
+      - "traefik.http.routers.traefik.tls.domains[0].sans=*.in.rounds.house"
+      
+      # Define the service as internal API (Traefik Dashboard)
+      - "traefik.http.routers.traefik.service=api@internal"
+
+networks:
+  socket-proxy:
+    external: true
+  frontend:
+    external: true
+
+volumes:
+  letsencrypt:
+    name: traefik_letsencrypt
+
+secrets:
+  dnsimple_oauth_token:
+    file: ${SECRETS}/traefik.dnsimple.token
+  traefik_dashboard_credentials:
+    file: ${SECRETS}/traefik.dashboard.credentials
+
+
+
+
+
+
+      # - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"

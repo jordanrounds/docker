@@ -1,0 +1,65 @@
+http:
+  routers:
+    pve:
+      entryPoints:
+        - "https"
+      rule: "Host(`pve.in.rounds.house`)"
+      service: pve
+      tls: true
+    ha:
+      entryPoints:
+        - "https"
+      rule: "Host(`ha.in.rounds.house`)"
+      service: ha
+      tls: true
+    synology:
+      entryPoints:
+        - "https"
+      rule: "Host(`synology.in.rounds.house`)"
+      service: synology
+      tls: true
+    zigbee:
+      entryPoints:
+        - "https"
+      rule: "Host(`zigbee-controller.in.rounds.house`)"
+      service: zigbee
+      tls: true
+    zima:
+      entryPoints:
+        - "https"
+      rule: "Host(`zima.in.rounds.house`)"
+      service: zima
+      tls: true
+      
+  services:
+    pve:
+      loadBalancer:
+        servers:
+          - url: "https://nuc.metal.in.rounds.house:8006"
+        passHostHeader: true
+    ha:
+      loadBalancer:
+        servers:
+          - url: "http://ha.vm.in.rounds.house:8123"
+        passHostHeader: true
+    synology:
+      loadBalancer:
+        servers:
+          - url: "http://synology.metal.in.rounds.house:5000"
+        passHostHeader: true
+    zigbee:
+      loadBalancer:
+        servers:
+          - url: "http://zigbee.metal.in.rounds.house"
+        passHostHeader: true
+    zima:
+      loadBalancer:
+        servers:
+          - url: "https://zima.metal.in.rounds.house:8006"
+        passHostHeader: true
+
+
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12

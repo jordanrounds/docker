@@ -1,0 +1,29 @@
+services:
+  bind9:
+    image: ubuntu/bind9:latest
+    container_name: bind9
+    environment:
+      - BIND9_USER=bind
+      - TZ=${TZ}
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    volumes:
+      - config:/etc/bind
+      - cache:/var/cache/bind
+      - records:/var/lib/bind
+    restart: unless-stopped
+    networks:
+      - backend
+
+volumes:
+  config:
+    name: bind9_config
+  cache:
+    name: bind9_cache
+  records:
+    name: bind9_records
+
+networks:
+  backend:
+    external: true
