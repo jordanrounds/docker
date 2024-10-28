@@ -8,24 +8,33 @@ services:
     stop_signal: SIGINT
     environment:
       - SESSION_SECRET=${SESSION_SECRET}
-      #- ZWAVEJS_EXTERNAL_CONFIG=/usr/src/app/store/.config-db
+      - ZWAVEJS_EXTERNAL_CONFIG=/usr/src/app/store/.config-db
       - TZ=${TZ}
     networks:
       - backend
-    #devices:
-      # Do not use /dev/ttyUSBX serial devices, as those mappings can change over time.
-      # Instead, use the /dev/serial/by-id/X serial device for your Z-Wave stick.
-      #- '/dev/serial/by-id/insert_stick_reference_here:/dev/zwave'
+      - frontend
+    devices:
+      # Use the /dev/serial/by-id/X serial device for Z-Wave stick.
+      - '/dev/serial/by-id/usb-Zooz_800_Z-Wave_Stick_533D004242-if00:/dev/zwave'
     volumes:
       - config:/usr/src/app/store
     ports:
       - '8091:8091' # port for web interface
       - '3000:3000' # port for Z-Wave JS websocket server
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.zwave-js-ui.rule=Host(`zwave.in.rounds.house`)"
+      - "traefik.http.routers.zwave-js-ui.entrypoints=https"
+      - "traefik.http.routers.zwave-js-ui.tls=true"
+      - "traefik.http.services.zwave-js-ui.loadbalancer.server.port=8091"
+      - "traefik.docker.network=frontend"
 
 networks:
   backend:
     external: true
+  frontend:
+    external: true
 
 volumes:
   config:
-    name: zwave_config
+    name: zwave-js-ui_config
