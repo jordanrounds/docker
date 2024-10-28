@@ -6,13 +6,35 @@ services:
       PUID: ${PUID}
       PGID: ${PGID}
       TZ: ${TZ}
+      HOMEPAGE_FILE_PORTAINER_KEY: /run/secrets/portainer_key
+      HOMEPAGE_FILE_QBITTORRENT_USERNAME: /run/secrets/qbittorrent_username
+      HOMEPAGE_FILE_QBITTORRENT_PASSWORD: /run/secrets/qbittorrent_password
+      HOMEPAGE_FILE_PLEX_KEY: /run/secrets/plex_key
+      HOMEPAGE_FILE_PVE_USERNAME: /run/secrets/pve_username
+      HOMEPAGE_FILE_PVE_PASSWORD: /run/secrets/pve_password
+    secrets:
+      - portainer_key
+      - qbittorrent_username
+      - qbittorrent_password
+      - plex_key
+      - pve_username
+      - pve_password
     ports:
       - 3001:3000
     volumes:
       - config:/app/config:rw
+      - ./icons:/app/public/icons
     networks:
       - frontend
     restart: unless-stopped
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.homepage.rule=Host(`in.rounds.house`)"
+    - "traefik.http.routers.homepage.entrypoints=https"
+    - "traefik.http.routers.homepage.tls=true"
+    - "traefik.http.services.homepage.loadbalancer.server.port=3000"
+    - "traefik.docker.network=frontend"
+
 volumes:
   config:
     name: homepage_config
@@ -20,3 +42,17 @@ volumes:
 networks:
   frontend:
     external: true
+
+secrets:
+  portainer_key:
+    file: ${SECRETS}/homepage.portainer.key
+  qbittorrent_username:
+    file: ${SECRETS}/qbittorrent.username
+  qbittorrent_password:
+    file: ${SECRETS}/qbittorrent.password
+  plex_key:
+    file: ${SECRETS}/plex.key
+  pve_username:
+    file: ${SECRETS}/pve.api.username
+  pve_password:
+    file: ${SECRETS}/pve.api.password
