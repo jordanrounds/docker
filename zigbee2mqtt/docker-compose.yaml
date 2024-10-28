@@ -7,14 +7,21 @@ services:
       PUID: ${PUID}
       PGID: ${PGID}
       TZ: ${TZ}
-      ZIGBEE2MQTT_DATA: /app/data/data # lets us write to data/data as 1000:1000, data is owned by root
     user: ${PUID}:${PGID}
     volumes:
       - data:/app/data
     ports:
       - 8383:8080
     networks:
+      - frontend
       - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.zigbee2mqtt.rule=Host(`zigbee.in.rounds.house`)"
+      - "traefik.http.routers.zigbee2mqtt.entrypoints=https"
+      - "traefik.http.routers.zigbee2mqtt.tls=true"
+      - "traefik.http.services.zigbee2mqtt.loadbalancer.server.port=8080"
+      - "traefik.docker.network=frontend"
 
 volumes:
   data:
@@ -22,5 +29,7 @@ volumes:
     external: true
 
 networks:
+  frontend:
+    external: true
   backend:
     external: true
