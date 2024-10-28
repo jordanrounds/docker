@@ -1,0 +1,52 @@
+# compose.yaml
+services:
+  influxdb2:
+    image: influxdb:2.7
+    container_name: influxdb2
+    restart: unless-stopped
+    ports:
+      - 8086:8086
+    networks:
+      - frontend
+      - backend
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME_FILE: /run/secrets/influx-username
+      DOCKER_INFLUXDB_INIT_PASSWORD_FILE: /run/secrets/influx-password 
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN_FILE: /run/secrets/influx-token
+      DOCKER_INFLUXDB_INIT_ORG: rounds.house 
+      DOCKER_INFLUXDB_INIT_BUCKET: homeassistant
+    secrets:
+      - influx-username
+      - influx-password
+      - influx-token
+    volumes:
+      - influxdb2_data:/var/lib/influxdb2
+      - influxdb2_config:/etc/influxdb2
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.influxdb2.rule=Host(`influxdb.in.rounds.house`)"
+    - "traefik.http.routers.influxdb2.entrypoints=https"
+    - "traefik.http.routers.influxdb2.tls=true"
+    - "traefik.http.services.influxdb2.loadbalancer.server.port=8086"
+    - "traefik.docker.network=frontend"
+
+secrets:
+  influx-username:
+    file: ${SECRETS}/influxdb2.username.admin
+  influx-password:
+    file: ${SECRETS}/influxdb2.password.admin
+  influx-token:
+    file: ${SECRETS}/influxdb2.token
+
+volumes:
+  influxdb2_data:
+    name: influxdb2_data
+  influxdb2_config:
+    name: influxdb2_config
+
+networks:
+  backend:
+    external: true
+  frontend:
+    external: true
