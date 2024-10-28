@@ -2,19 +2,39 @@ version: "3.7"
 services:
   portainer:
     container_name: portainer
-    image: portainer/portainer-ce:2.20.3-alpine
+    image: portainer/portainer-ce:2.23.0-alpine
     restart: always
     environment:
       TZ: ${TZ}
     ports:
-      - "9000:9000"
+      #- "9000:9000"
+      - "9443:9443"
       - "8000:8000"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - data:/data
+    networks:
+      - frontend
+      - socket-proxy
+    command: -H tcp://socket-proxy:2375
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.in.rounds.house`)"
+      - "traefik.http.routers.portainer.entrypoints=https"
+      - "traefik.http.routers.portainer.tls=true"
+      - "traefik.http.services.portainer.loadbalancer.server.scheme=https"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9443"
+      - "traefik.docker.network=frontend"
+
+      - wud.tag.include=^\d+\.\d+\.\d+-alpine$$
+      - wud.display.name=Portainer
+      - wud.display.icon=si:portainer
+
 volumes:
   data:
     name: portainer_data
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${LOCAL_PERSIST}/portainer/data
+
+networks:
+  frontend:
+    external: true
+  socket-proxy:
+    external: true
