@@ -10,10 +10,20 @@ services:
     volumes:
       - torrent:/data/torrent
       - config:/config
-      - qbittorrent_themes:/data/qbittorrent_themes
+      # - qbittorrent_themes:/data/qbittorrent_themes
     environment:
       - FB_BASEURL=/filebrowser
     restart: unless-stopped
+    networks:
+      - frontend
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.file-browser.rule=Host(`filebrowser.in.rounds.house`)"
+      - "traefik.http.routers.file-browser.entrypoints=https"
+      - "traefik.http.routers.file-browser.tls=true"
+      - "traefik.http.services.file-browser.loadbalancer.server.port=8080"
+      - "traefik.docker.network=frontend"
 
 volumes:
   config:
@@ -21,6 +31,9 @@ volumes:
   torrent:
     name: data_torrent
     external: true
-  qbittorrent_themes:
-    name: qbittorrent_themes
+
+networks:
+  frontend:
+    external: true
+  backend:
     external: true
