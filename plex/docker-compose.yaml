@@ -2,7 +2,16 @@ services:
   plex:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
-    network_mode: host
+    #network_mode: host # turned this off, added all the ports, and switched to frontend network
+    ports:
+          # Plex DLNA Server
+      - 1900:1900/udp
+      - 32410:32410/udp
+      - 32412:32412/udp
+      - 32413:32413/udp
+      - 32414:32414/udp
+    networks:
+      - frontend
     devices:
       - /dev/dri:/dev/dri #hardware acceleration
     environment:
@@ -12,11 +21,16 @@ services:
       - VERSION=docker
       - PLEX_LOG_DEBUG=1
       - FILE__PLEX_CLAIM=/run/secrets/claim
-      #- FILE__PLEX_CLAIM=/run/secrets/claim
     volumes:
       - config:/config
       - media:/media
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plex.rule=Host(`plex.in.rounds.house`)"
+      - "traefik.http.routers.plex.entrypoints=https"
+      - "traefik.http.routers.plex.tls=true"
+      - "traefik.http.services.plex.loadbalancer.server.port=32400"
 
 volumes:
   config:
@@ -28,3 +42,7 @@ volumes:
 secrets:
   claim:
     file: ${SECRETS}/plex.claim
+
+networks:
+  frontend:
+    external: true
