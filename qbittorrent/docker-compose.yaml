@@ -19,6 +19,14 @@ services:
       - 6881:6881
       - 6881:6881/udp
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.qbittorrent.rule=Host(`torrent.in.rounds.house`)"
+      - "traefik.http.routers.qbittorrent.entrypoints=https"
+      - "traefik.http.routers.qbittorrent.tls=true"
+      - "traefik.http.services.qbittorrent.loadbalancer.server.port=8080"
+      - "traefik.docker.network=frontend"
+
 volumes:
   config:
     name: qbittorrent_config
@@ -27,6 +35,7 @@ volumes:
     external: true
   themes:
     name: qbittorrent_themes
+    
 networks:
   frontend:
     external: true
