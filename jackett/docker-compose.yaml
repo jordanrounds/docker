@@ -14,6 +14,15 @@ services:
     ports:
       - 9117:9117
     restart: unless-stopped
+    networks:
+      - frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jackett.rule=Host(`jackett.in.rounds.house`)"
+      - "traefik.http.routers.jackett.entrypoints=https"
+      - "traefik.http.routers.jackett.tls=true"
+      - "traefik.http.services.jackett.loadbalancer.server.port=9117"
+      - "traefik.docker.network=frontend"
 volumes:
   config:
     name: jackett_config
@@ -25,3 +34,7 @@ volumes:
     driver: local-persist
     driver_opts:
       mountpoint: ${LOCAL_PERSIST}/jackett/downloads
+
+networks:
+  frontend:
+    external: true
