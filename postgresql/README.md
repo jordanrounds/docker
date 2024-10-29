@@ -9,8 +9,8 @@
 
 ### Volumes
 - postgresql_data
-- postgresql.conf is bind mounted
-- pg_hba.conf is bind mounted
+- config/postgresql.conf is bind mounted
+- config/pg_hba.conf is bind mounted
 
 ### External Connections
 - in the postgresql.conf added listen_addresses = '*'
