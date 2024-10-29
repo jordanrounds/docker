@@ -9,7 +9,6 @@ services:
       TZ: ${TZ}
       MOSQUITTO_USERNAME: ${MOSQUITTO_USERNAME}
       MOSQUITTO_PASSWORD_FILE: /run/secrets/password
-      #OVERWRITE_CONFIG: true
     restart: unless-stopped
     secrets:
       - password
@@ -19,7 +18,6 @@ services:
     networks:
       - backend
     volumes:
-     # - config:/mosquitto/config
       - log:/mosquitto/log
       - data:/mosquitto/data
       - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro #read only so that the container doesnt change permissions
@@ -28,8 +26,6 @@ volumes:
     name: mosquitto_log
   data:
     name: mosquitto_data
-  # config:
-  #   name: mosquitto_config
 secrets:
   password:
     file: ${SECRETS}/mosquitto.password.mos
