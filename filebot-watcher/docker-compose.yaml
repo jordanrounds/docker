@@ -1,18 +1,23 @@
 services:
   filebot:
-    container_name: filebot-watcher
     image: rednoah/filebot:watcher
-    restart: unless-stopped
+    container_name: filebot-watcher
     environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ}
-      SETTLE_DOWN_TIME: 300
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
+      SETTLE_DOWN_TIME: '300'
     volumes:
       - data:/data
       - input:/input
       - output:/output
-    command: ${COMMAND}
+    command: "${COMMAND}"
+    labels:
+      wud.link.template: 'https://github.com/filebot/filebot-docker'
+      wud.display.name: 'FileBot Watcher'
+      wud.display.icon: 'mdi:robot'
+    restart: unless-stopped
+
 volumes:
   data:
     name: filebot-watcher_data

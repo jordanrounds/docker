@@ -1,20 +1,24 @@
 services:
   bind9:
-    image: ubuntu/bind9:latest
+    image: ubuntu/bind9:9.18-24.04_beta
     container_name: bind9
     environment:
-      - BIND9_USER=bind
-      - TZ=${TZ}
+      BIND9_USER: bind
+      TZ: "${TZ}"
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
+      - '53:53/tcp'
+      - '53:53/udp'
     volumes:
       - config:/etc/bind
       - cache:/var/cache/bind
       - records:/var/lib/bind
-    restart: unless-stopped
     networks:
       - backend
+    labels:
+      wud.tag.include: '^\d+\.\d+-\d+\.\d+_(beta|candidate|stable)$$'
+      wud.display.name: 'Bind9'
+      wud.display.icon: 'mdi:dns-outline'
+    restart: unless-stopped
 
 volumes:
   config:

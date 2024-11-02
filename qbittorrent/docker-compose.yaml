@@ -1,31 +1,41 @@
 services:
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
+    #image: lscr.io/linuxserver/qbittorrent:latest
+    image: linuxserver/qbittorrent:latest
     container_name: qbittorrent
     environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ}
-      WEBUI_PORT: 8080
-      TORRENTING_PORT: 6881
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
+      WEBUI_PORT: '8080'
+      TORRENTING_PORT: '6881'
+      DOCKER_MODS: 'ghcr.io/themepark-dev/theme.park:qbittorrent'
+      QBITTORRENT_VERSION: '5.0.0'
+      TP_COMMUNITY_THEME: 'true'
+      TP_THEME: catppuccin-mocha
+      TP_DISABLE_THEME: 'false' # set to true to disable theme if web ui wont load
     volumes:
       - config:/config
       - torrent:/torrent
-      - themes:/themes
     networks:
       - frontend
     ports:
-      - 8080:8080
-      - 6881:6881
-      - 6881:6881/udp
-    restart: unless-stopped
+      - '8080:8080'
+      - '6881:6881'
+      - '6881:6881/udp'
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.qbittorrent.rule=Host(`torrent.in.rounds.house`)"
-      - "traefik.http.routers.qbittorrent.entrypoints=https"
-      - "traefik.http.routers.qbittorrent.tls=true"
-      - "traefik.http.services.qbittorrent.loadbalancer.server.port=8080"
-      - "traefik.docker.network=frontend"
+      traefik.enable: 'true'
+      traefik.http.routers.qbittorrent.rule: 'Host(`torrent.in.rounds.house`)'
+      traefik.http.routers.qbittorrent.entrypoints: 'https'
+      traefik.http.routers.qbittorrent.tls: 'true'
+      traefik.http.services.qbittorrent.loadbalancer.server.port: '8080'
+      traefik.docker.network: 'frontend'
+
+      wud.tag.include: '^\d+\.\d+\.\d+$'
+      wud.link.template: 'https://www.qbittorrent.org/news'
+      wud.display.name: 'qBittorrent'
+      wud.display.icon: 'sh:qbittorrent'
+    restart: unless-stopped
 
 volumes:
   config:
@@ -33,9 +43,7 @@ volumes:
   torrent:
     name: data_torrent
     external: true
-  themes:
-    name: qbittorrent_themes
-    
+
 networks:
   frontend:
     external: true

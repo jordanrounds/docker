@@ -3,18 +3,22 @@ services:
     image: emqx/mqttx-web:latest
     container_name: mqttx
     ports: 
-      - 8083:80
-    restart: unless-stopped
+      - '8083:80'
     networks:
       - frontend
       - backend
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mqttx.rule=Host(`mqttx.in.rounds.house`)"
-      - "traefik.http.routers.mqttx.entrypoints=https"
-      - "traefik.http.routers.mqttx.tls=true"
-      - "traefik.http.services.mqttx.loadbalancer.server.port=80"
-      - "traefik.docker.network=frontend"
+      traefik.enable: 'true'
+      traefik.http.routers.mqttx.rule: 'Host(`mqttx.in.rounds.house`)'
+      traefik.http.routers.mqttx.entrypoints: 'https'
+      traefik.http.routers.mqttx.tls: 'true'
+      traefik.http.services.mqttx.loadbalancer.server.port: '80'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/emqx/MQTTX/releases'
+      wud.display.name: 'MQTTX'
+      wud.display.icon: 'si:mqtt'
+    restart: unless-stopped
 
 networks:
   frontend:

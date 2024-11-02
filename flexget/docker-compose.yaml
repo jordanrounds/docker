@@ -1,13 +1,11 @@
-version: '3.7'
-
 services:
   flexget:
     image: lscr.io/linuxserver/flexget:latest
     container_name: flexget
     environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ}
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
       FG_LOG_LEVEL: info
       FG_LOG_FILE: /config/flexget.log
       FG_CONFIG_FILE: /config/config.yml
@@ -15,10 +13,23 @@ services:
     volumes:
       - config:/config
       - downloads:/data
+    networks:
+      - frontend
     secrets:
       - password
     ports:
-      - 5050:5050
+      - '5050:5050'
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.flexget.rule: 'Host(`flexget.in.rounds.house`)'
+      traefik.http.routers.flexget.entrypoints: 'https'
+      traefik.http.routers.flexget.tls: 'true'
+      traefik.http.services.flexget.loadbalancer.server.port: '5050'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/linuxserver/docker-flexget/releases'
+      wud.display.name: 'FlexGet'
+      wud.display.icon: 'mdi:alpha-x-box'
     restart: unless-stopped
 
 volumes:
@@ -26,6 +37,10 @@ volumes:
     name: flexget_config
   downloads:
     name: data_torrent
+    external: true
+
+networks:
+  frontend:
     external: true
 
 secrets:

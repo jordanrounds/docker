@@ -3,41 +3,45 @@ services:
     image: getwud/wud
     container_name: wud
     environment:
-      - TZ=${TZ}
-      - DOCKER_HOST=tcp://socket-proxy:2375
-      - WUD_TRIGGER_MQTT_MOSQUITTO_URL=mqtt://mosquitto:1883
-      - WUD_TRIGGER_MQTT_MOSQUITTO_USER=wud
-      - WUD_TRIGGER_MQTT_MOSQUITTO_PASSWORD__FILE=/run/secrets/password
-      - WUD_TRIGGER_MQTT_MOSQUITTO_CLIENTID=wud
-      - WUD_TRIGGER_MQTT_MOSQUITTO_HASS_ENABLED=true
-      - WUD_TRIGGER_MQTT_MOSQUITTO_HASS_DISCOVERY=true
-      #- WUD_LOG_LEVEL=debug
-      #- WUD_LOG_FORMAT=json
+      TZ: "${TZ}"
+      #DOCKER_HOST: tcp://socket-proxy:2375
+      WUD_TRIGGER_MQTT_MOSQUITTO_URL: mqtt://mosquitto:1883
+      WUD_TRIGGER_MQTT_MOSQUITTO_USER: wud
+      WUD_TRIGGER_MQTT_MOSQUITTO_PASSWORD__FILE: /run/secrets/password
+      WUD_TRIGGER_MQTT_MOSQUITTO_CLIENTID: wud
+      WUD_TRIGGER_MQTT_MOSQUITTO_HASS_ENABLED: 'true'
+      WUD_TRIGGER_MQTT_MOSQUITTO_HASS_DISCOVERY: 'true'
+      WUD_WATCHER_LOCAL_CRON: '0 1 * * *'
+      # WUD_LOG_LEVEL: debug
+      # WUD_LOG_FORMAT: json
     ports:
-      - 3002:3000
+      - '3002:3000'
+    volumes:
+      - store:/store
+      - /var/run/docker.sock:/var/run/docker.sock
+    secrets:
+      - password
     networks:
       - socket-proxy
       - frontend
       - backend
-    volumes:
-      - store:/store
-    #   - /var/run/docker.sock:/var/run/docker.sock
-    secrets:
-      - password
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.wud.rule=Host(`wud.in.rounds.house`)"
-      - "traefik.http.routers.wud.entrypoints=https"
-      - "traefik.http.routers.wud.tls=true"
-      - "traefik.http.services.wud.loadbalancer.server.port=3000"
-      - "traefik.docker.network=frontend"
+      traefik.enable: 'true'
+      traefik.http.routers.wud.rule: 'Host(`wud.in.rounds.house`)'
+      traefik.http.routers.wud.entrypoints: 'https'
+      traefik.http.routers.wud.tls: 'true'
+      traefik.http.services.wud.loadbalancer.server.port: '3000'
+      traefik.docker.network: 'frontend'
 
-      - 'wud.tag.include=^\d+\.\d+\.\d+$$'
-      - 'wud.link.template=https://github.com/getwud/wud/releases/tag/$${major}.$${minor}.$${patch}'
+      wud.tag.include: '^\d+\.\d+\.\d+$$'
+      wud.link.template: 'https://github.com/getwud/wud/releases/tag/$${major}.$${minor}.$${patch}'
+      wud.display.name: 'Whats Up Docker?'
+      wud.display.icon: 'sh:whats-up-docker-light'
+    restart: unless-stopped
 
 volumes:
   store:
-    name: whatsupdocker_store
+    name: wud_store
 
 networks:
   socket-proxy:

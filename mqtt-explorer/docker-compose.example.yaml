@@ -1,0 +1,64 @@
+#https://github.com/Tob1as/docker-kubernetes-collection/blob/master/examples_docker-compose/mqtt-explorer.yml
+
+services:
+  # MQTT-Explorer - MQTT Web Client Tool (wss:// and mqtt:// connections) 
+  # https://github.com/thomasnordquist/MQTT-Explorer
+  # https://hub.docker.com/r/smeagolworms4/mqtt-explorer & https://github.com/Smeagolworms4/MQTT-Explorer
+  # https://github.com/Tob1as/docker-mqtt-explorer
+  # Supported architectures: arm32v6, arm32v7, arm64v8, amd64
+  mqtt-explorer:
+    image: smeagolworms4/mqtt-explorer:latest
+    #image: ghcr.io/tob1as/docker-mqtt-explorer:latest
+    container_name: mqtt-explorer
+    restart: unless-stopped
+    environment:
+    #  - HTTP_USER=admin
+    #  - HTTP_PASSWORD=passw0rd
+      - HTTP_PORT=4000
+    #  - CONFIG_PATH=/mqtt-explorer/config
+    #  - SSL_KEY_PATH=
+    #  - SSL_CERT_PATH=
+    #  - INITIAL_CONFIG= # Initial json configuration for start
+    #  - NODE_EXTRA_CA_CERTS=/ssl/ca.crt
+    volumes:
+      - config:/mqtt-explorer/config:rw
+    #  - ./ssl:/ssl:ro
+    ports:
+     - 4000:4000/tcp
+    # healthcheck:
+    #   test: ["CMD-SHELL", "nc -nzv -w 3 127.0.0.1 4000 || exit 1"]
+    #   #start_period: 30s
+    #   interval: 60s
+    #   timeout: 5s
+    #   retries: 3
+    # secrets:
+    #   - username
+    #   - password
+    networks:
+      - frontend
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.mqtt-explorer.rule: 'Host(`mqtt-explorer.in.rounds.house`)'
+      traefik.http.routers.mqtt-explorer.entrypoints: 'https'
+      traefik.http.routers.mqtt-explorer.tls: 'true'
+      traefik.http.services.mqtt-explorer.loadbalancer.server.port: '4000'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/Smeagolworms4/MQTT-Explorer/releases'
+      wud.display.name: 'MQTT Explorer'
+      wud.display.icon: 'si:mqtt'
+      
+
+volumes:
+  config:
+    name: mqtt-explorer_config
+
+networks:
+  frontend:
+    external: true
+
+# secrets:
+#   username:
+#     file: ${SECRETS}/mqtt-explorer.username
+#   password:
+#     file: ${SECRETS}/mqtt-explorer.password

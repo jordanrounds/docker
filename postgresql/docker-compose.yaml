@@ -2,26 +2,31 @@ services:
   postgresql:
     image: postgres:16.4
     container_name: postgresql
-    restart: unless-stopped
     environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD_FILE: /run/secrets/password
       PGDATA: /var/lib/postgresql/data/pgdata  # Directory for database data
     volumes:
       - data:/var/lib/postgresql/data
       - ./config/postgresql.conf:/etc/postgresql/postgresql.conf  # config
-      - ./config/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf # client authenticaiton config
+      - ./config/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf # client authentication config
     secrets:
       - password
     ports:
-      - 5432:5432
+      - '5432:5432'
     networks:
       - backend
     command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+    labels:
+      wud.tag.include: '^\d+\.\d+$$'
+      wud.link.template: 'https://www.postgresql.org/docs/release/$${major}.$${minor}'
+      wud.display.name: 'PostgreSQL'
+      wud.display.icon: 'sh:postgresql'
+    restart: unless-stopped
 
 volumes:
   data:

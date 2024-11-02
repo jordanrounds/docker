@@ -1,21 +1,38 @@
 services:
   filebot-node:
-    container_name: filebot-node
     image: rednoah/filebot:node
-    restart: unless-stopped
+    container_name: filebot-node
     volumes:
       - data:/data
       - output:/volume1
       - input:/input
     ports:
-      - 5452:5452
+      - '5452:5452'
+    networks:
+      - frontend
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.filebot.rule: 'Host(`filebot.in.rounds.house`)'
+      traefik.http.routers.filebot.entrypoints: 'https'
+      traefik.http.routers.filebot.tls: 'true'
+      traefik.http.services.filebot.loadbalancer.server.port: '5452'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/filebot/filebot-docker'
+      wud.display.name: 'FileBot Node'
+      wud.display.icon: 'mdi:robot-vacuum'
+    restart: unless-stopped
 
 volumes:
   data:
     name: filebot-node_data
   output:
-    name: nfs_test #nfs_media
+    name: nfs_media
     external: true
   input:
     name: data_torrent
+    external: true
+
+networks:
+  frontend:
     external: true

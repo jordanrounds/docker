@@ -3,9 +3,9 @@ services:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
     environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ}
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
       HOMEPAGE_FILE_PORTAINER_KEY: /run/secrets/portainer_key
       HOMEPAGE_FILE_QBITTORRENT_USERNAME: /run/secrets/qbittorrent_username
       HOMEPAGE_FILE_QBITTORRENT_PASSWORD: /run/secrets/qbittorrent_password
@@ -20,20 +20,24 @@ services:
       - pve_username
       - pve_password
     ports:
-      - 3001:3000
+      - '3001:3000'
     volumes:
       - config:/app/config:rw
       - ./icons:/app/public/icons
     networks:
       - frontend
-    restart: unless-stopped
     labels:
-    - "traefik.enable=true"
-    - "traefik.http.routers.homepage.rule=Host(`in.rounds.house`)"
-    - "traefik.http.routers.homepage.entrypoints=https"
-    - "traefik.http.routers.homepage.tls=true"
-    - "traefik.http.services.homepage.loadbalancer.server.port=3000"
-    - "traefik.docker.network=frontend"
+      traefik.enable: 'true'
+      traefik.http.routers.homepage.rule: 'Host(`in.rounds.house`)'
+      traefik.http.routers.homepage.entrypoints: 'https'
+      traefik.http.routers.homepage.tls: 'true'
+      traefik.http.services.homepage.loadbalancer.server.port: '3000'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/gethomepage/homepage/releases'
+      wud.display.name: 'Homepage'
+      wud.display.icon: 'sh:homepage'
+    restart: unless-stopped
 
 volumes:
   config:

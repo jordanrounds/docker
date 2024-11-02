@@ -1,29 +1,30 @@
-# version: "3"
-
 services:
   file-browser:
+    image: hurlenko/filebrowser:latest
     container_name: file-browser
-    image: hurlenko/filebrowser
     user: "${PUID}:${PGID}"
+    environment:
+      FB_BASEURL: /filebrowser
     ports:
-      - 8081:8080
+      - '8081:8080'
     volumes:
       - torrent:/data/torrent
       - config:/config
-      # - qbittorrent_themes:/data/qbittorrent_themes
-    environment:
-      - FB_BASEURL=/filebrowser
-    restart: unless-stopped
     networks:
       - frontend
       - backend
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.file-browser.rule=Host(`filebrowser.in.rounds.house`)"
-      - "traefik.http.routers.file-browser.entrypoints=https"
-      - "traefik.http.routers.file-browser.tls=true"
-      - "traefik.http.services.file-browser.loadbalancer.server.port=8080"
-      - "traefik.docker.network=frontend"
+      traefik.enable: 'true'
+      traefik.http.routers.file-browser.rule: 'Host(`filebrowser.in.rounds.house`)'
+      traefik.http.routers.file-browser.entrypoints: 'https'
+      traefik.http.routers.file-browser.tls: 'true'
+      traefik.http.services.file-browser.loadbalancer.server.port: '8080'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/filebrowser/filebrowser/releases'
+      wud.display.name: 'File Browser'
+      wud.display.icon: 'sh:file-browser'
+    restart: unless-stopped
 
 volumes:
   config:

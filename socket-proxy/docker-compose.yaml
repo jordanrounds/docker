@@ -40,6 +40,10 @@ services:
       - socket-proxy
     ports:
       - "2375:2375"
+    labels:
+      wud.link.template: 'https://github.com/linuxserver/docker-socket-proxy/releases'
+      wud.display.name: 'Docker Socket Proxy'
+      wud.display.icon: 'mdi:connection'
 
 networks:
   socket-proxy:

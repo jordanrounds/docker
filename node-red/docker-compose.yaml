@@ -1,24 +1,28 @@
-version: '3.7'
 services:
   node-red:
-    build: .
-    container_name: "node-red"
+    image: nodered/node-red:latest
+    container_name: node-red
     environment:
-      TZ: ${TZ}
-    restart: unless-stopped
+      TZ: "${TZ}"
     ports:
-      - "1880:1880"
+      - '1880:1880'
     volumes:
-      - "data:/data"
+      - data:/data
     networks:
       - frontend
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.nodered.rule=Host(`nodered.in.rounds.house`)"
-      - "traefik.http.routers.nodered.entrypoints=https"
-      - "traefik.http.routers.nodered.tls=true"
-      - "traefik.http.services.nodered.loadbalancer.server.port=1880"
-      - "traefik.docker.network=frontend"
+      traefik.enable: 'true'
+      traefik.http.routers.nodered.rule: 'Host(`nodered.in.rounds.house`)'
+      traefik.http.routers.nodered.entrypoints: 'https'
+      traefik.http.routers.nodered.tls: 'true'
+      traefik.http.services.nodered.loadbalancer.server.port: '1880'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/node-red/node-red-docker/releases'
+      wud.display.name: 'Node-RED'
+      wud.display.icon: 'sh:node-red'
+    restart: unless-stopped
+
 volumes:
   data:
     name: node-red_data

@@ -7,7 +7,7 @@ services:
       PUID: ${PUID}
       PGID: ${PGID}
       TZ: ${TZ}
-      MOSQUITTO_USERNAME: ${MOSQUITTO_USERNAME}
+      MOSQUITTO_USERNAME: mos
       MOSQUITTO_PASSWORD_FILE: /run/secrets/password
     restart: unless-stopped
     secrets:

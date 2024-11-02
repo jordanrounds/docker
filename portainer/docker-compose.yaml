@@ -1,15 +1,13 @@
-version: "3.7"
 services:
   portainer:
-    container_name: portainer
     image: portainer/portainer-ce:2.23.0-alpine
-    restart: always
+    container_name: portainer
     environment:
-      TZ: ${TZ}
+      TZ: "${TZ}"
     ports:
-      #- "9000:9000"
-      - "9443:9443"
-      - "8000:8000"
+      # - '9000:9000'
+      - '9443:9443'
+      - '8000:8000'
     volumes:
       - data:/data
     networks:
@@ -17,17 +15,19 @@ services:
       - socket-proxy
     command: -H tcp://socket-proxy:2375
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=Host(`portainer.in.rounds.house`)"
-      - "traefik.http.routers.portainer.entrypoints=https"
-      - "traefik.http.routers.portainer.tls=true"
-      - "traefik.http.services.portainer.loadbalancer.server.scheme=https"
-      - "traefik.http.services.portainer.loadbalancer.server.port=9443"
-      - "traefik.docker.network=frontend"
+      traefik.enable: 'true'
+      traefik.http.routers.portainer.rule: 'Host(`portainer.in.rounds.house`)'
+      traefik.http.routers.portainer.entrypoints: 'https'
+      traefik.http.routers.portainer.tls: 'true'
+      traefik.http.services.portainer.loadbalancer.server.scheme: 'https'
+      traefik.http.services.portainer.loadbalancer.server.port: '9443'
+      traefik.docker.network: 'frontend'
 
-      - wud.tag.include=^\d+\.\d+\.\d+-alpine$$
-      - wud.display.name=Portainer
-      - wud.display.icon=si:portainer
+      wud.tag.include: '^\d+\.\d+\.\d+-alpine$$'
+      wud.link.template: 'https://github.com/portainer/portainer/releases/tag/$${major}.$${minor}.$${patch}'
+      wud.display.name: 'Portainer'
+      wud.display.icon: 'sh:portainer'
+    restart: always
 
 volumes:
   data:

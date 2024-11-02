@@ -1,26 +1,35 @@
-version: '3.8'
-
 services:
   code-server:
     image: lscr.io/linuxserver/code-server:latest
     container_name: code-server
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - FILE__PASSWORD=/run/secrets/password
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
+      FILE__PASSWORD: /run/secrets/password
     volumes:
       - config:/config # code-server config
-      - ${DOCKER}:/config/workspace/docker # docker folders
+      - "${DOCKER}:/config/workspace/docker" # docker folders
       - homepage_config:/config/workspace/docker-volumes/homepage_config
       - flexget_config:/config/workspace/docker-volumes/flexget_config
-      #- plex_config:/config/workspace/docker-volumes/plex_config
       - bind9_config:/config/workspace/docker-volumes/bind9_config
       - bind9_cache:/config/workspace/docker-volumes/bind9_cache
-      - bind9_records:/config/workspace/docker-volumes/bind9_records
       - qbittorrent_config:/config/workspace/docker-volumes/qbittorrent_config
     ports:
-      - 8443:8443
+      - '8443:8443'
+    networks:
+      - frontend
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.code.rule: 'Host(`code.in.rounds.house`)'
+      traefik.http.routers.code.entrypoints: 'https'
+      traefik.http.routers.code.tls: 'true'
+      traefik.http.services.code.loadbalancer.server.port: '8443'
+      traefik.docker.network: 'frontend'
+      
+      wud.link.template: 'https://github.com/linuxserver/docker-code-server/releases'
+      wud.display.name: 'Code Server'
+      wud.display.icon: 'sh:visual-studio-code'
     restart: unless-stopped
 
 volumes:
@@ -30,16 +39,17 @@ volumes:
     external: true
   flexget_config:
     external: true
-  plex_config:
-    external: true
   bind9_config:
     external: true
   bind9_cache:
     external: true
-  bind9_records:
-    external: true
   qbittorrent_config:
     external: true
+
+networks:
+  frontend:
+    external: true
+
 secrets:
   password:
     file: ${SECRETS}/code-server.password

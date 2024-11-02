@@ -1,0 +1,32 @@
+services:
+  mqtt-explorer:
+    image: smeagolworms4/mqtt-explorer:latest
+    container_name: mqtt-explorer
+    environment:
+      HTTP_PORT: '4000'
+    volumes:
+      - config:/mqtt-explorer/config:rw
+    ports:
+      - '4000:4000/tcp'
+    networks:
+      - frontend
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.mqtt-explorer.rule: 'Host(`mqtt-explorer.in.rounds.house`)'
+      traefik.http.routers.mqtt-explorer.entrypoints: 'https'
+      traefik.http.routers.mqtt-explorer.tls: 'true'
+      traefik.http.services.mqtt-explorer.loadbalancer.server.port: '4000'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/Smeagolworms4/MQTT-Explorer/releases'
+      wud.display.name: 'MQTT Explorer'
+      wud.display.icon: 'si:mqtt'
+    restart: unless-stopped
+
+volumes:
+  config:
+    name: mqtt-explorer_config
+
+networks:
+  frontend:
+    external: true
