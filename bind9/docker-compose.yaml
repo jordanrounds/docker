@@ -9,9 +9,8 @@ services:
       - '53:53/tcp'
       - '53:53/udp'
     volumes:
-      - config:/etc/bind
+      - ./config:/etc/bind
       - cache:/var/cache/bind
-      - records:/var/lib/bind
     networks:
       - backend
     labels:
@@ -21,12 +20,8 @@ services:
     restart: unless-stopped
 
 volumes:
-  config:
-    name: bind9_config
   cache:
     name: bind9_cache
-  records:
-    name: bind9_records
 
 networks:
   backend:
