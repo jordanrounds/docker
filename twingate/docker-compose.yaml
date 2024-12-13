@@ -1,0 +1,20 @@
+services:
+  twingate:
+    container_name: twingate
+    restart: always
+    image: "twingate/connector:latest"
+    environment:
+      TWINGATE_LABEL_DEPLOYED_BY: docker
+      TWINGATE_NETWORK: "${NETWORK}"
+      TWINGATE_ACCESS_TOKEN: "${ACCESS_TOKEN}"
+      TWINGATE_REFRESH_TOKEN: "${REFRESH_TOKEN}"
+      TWINGATE_LOG_ANALYTICS: v2
+      TWINGATE_LOG_LEVEL: 3
+    labels:
+      wud.tag.include: '^\d+\.\d+\.\d+$$'
+      wud.link.template: 'https://github.com/getwud/wud/releases/tag/$${major}.$${minor}.$${patch}'
+      wud.display.name: 'Twingate'
+      wud.display.icon: 'sh:twingate'
+
+    sysctls:
+      net.ipv4.ping_group_range: "0 2147483647"
