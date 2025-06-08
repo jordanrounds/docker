@@ -5,3 +5,6 @@
 .data
 persist-data
 secret.yaml
+**/rndc.key
+**/tsig.key
+**/*.key
