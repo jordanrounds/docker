@@ -1,0 +1,37 @@
+services:
+  bind9-slave-test:
+    image: ubuntu/bind9:9.18-24.04_beta
+    container_name: bind9-slave-test
+    environment:
+      BIND9_USER: bind
+      TZ: "${TZ}"
+    ports:
+      - '5354:53/tcp'  # Test port
+      - '5354:53/udp'  # Test port
+    volumes:
+      - ./config:/etc/bind   # Bind-mounted directory for configuration
+      - cache_test:/var/cache/bind  # Docker-managed volume for the slave's zone files
+      - ./docker-entrypoint.sh:/docker-entrypoint-custom.sh:ro
+    secrets:
+      - tsig_key
+    networks:
+      - backend
+    labels:
+      wud.tag.include: '^\d+\.\d+-\d+\.\d+_(beta|candidate|stable)$$'
+      wud.display.name: 'Bind9 Slave Test'
+      wud.display.icon: 'mdi:dns-outline'
+    restart: unless-stopped
+    entrypoint: ["/docker-entrypoint-custom.sh"]
+    command: ["named", "-g", "-c", "/etc/bind/named.conf", "-u", "bind"]
+
+volumes:
+  cache_test:
+    name: bind9-slave_cache_test
+
+secrets:
+  tsig_key:
+    file: ${SECRETS}/bind9.tsig.key
+
+networks:
+  backend:
+    external: true

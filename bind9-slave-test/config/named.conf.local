@@ -1,0 +1,7 @@
+include "/etc/bind/tsig.key";
+
+zone "in.rounds.house" {
+    type slave;
+    masters { 10.10.10.40 key "tsig-key"; };  # docker.vm - the master DNS server
+    file "/var/cache/bind/db.in.rounds.house";
+};

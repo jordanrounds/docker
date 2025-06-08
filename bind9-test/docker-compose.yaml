@@ -1,0 +1,37 @@
+services:
+  bind9-test:
+    image: ubuntu/bind9:9.18-24.04_beta
+    container_name: bind9-test
+    environment:
+      BIND9_USER: bind
+      TZ: "${TZ}"
+    ports:
+      - '5353:53/tcp'  # Test port
+      - '5353:53/udp'  # Test port
+    volumes:
+      - ./config:/etc/bind
+      - cache_test:/var/cache/bind
+      - ./docker-entrypoint.sh:/docker-entrypoint-custom.sh:ro
+    secrets:
+      - rndc_key
+    networks:
+      - backend
+    labels:
+      wud.tag.include: '^\d+\.\d+-\d+\.\d+_(beta|candidate|stable)$$'
+      wud.display.name: 'Bind9 Test'
+      wud.display.icon: 'mdi:dns-outline'
+    restart: unless-stopped
+    entrypoint: ["/docker-entrypoint-custom.sh"]
+    command: ["named", "-g", "-c", "/etc/bind/named.conf", "-u", "bind"]
+
+volumes:
+  cache_test:
+    name: bind9_cache_test
+
+secrets:
+  rndc_key:
+    file: ${SECRETS}/bind9.rndc.key
+
+networks:
+  backend:
+    external: true
