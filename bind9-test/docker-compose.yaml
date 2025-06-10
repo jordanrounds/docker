@@ -1,13 +1,13 @@
 services:
   bind9-test:
-    image: ubuntu/bind9:9.18-24.04_beta
+    image: ubuntu/bind9:9.18-22.04_edge
     container_name: bind9-test
     environment:
       BIND9_USER: bind
       TZ: "${TZ}"
     ports:
-      - '5353:53/tcp'  # Test port
-      - '5353:53/udp'  # Test port
+      - '53:53/tcp'  # Test port
+      - '53:53/udp'  # Test port
     volumes:
       - ./config:/etc/bind
       - cache_test:/var/cache/bind
@@ -22,7 +22,6 @@ services:
       wud.display.icon: 'mdi:dns-outline'
     restart: unless-stopped
     entrypoint: ["/docker-entrypoint-custom.sh"]
-    command: ["named", "-g", "-c", "/etc/bind/named.conf", "-u", "bind"]
 
 volumes:
   cache_test:

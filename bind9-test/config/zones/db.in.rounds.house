@@ -14,7 +14,7 @@ $TTL 86400
 @				    IN      A       10.10.10.40 ; homepage
 
 ; Define the A records for the nameservers
-ns1                 IN      A       10.10.10.40 ; docker - nuc (primary)
+ns1                 IN      A       10.10.10.41 ; docker - zima (primary)
 ns2                 IN      A       10.10.10.40 ; docker - nuc (secondary)
 
 ; Define the A records for the proxies
