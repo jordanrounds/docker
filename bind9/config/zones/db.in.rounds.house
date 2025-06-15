@@ -1,0 +1,52 @@
+$TTL 86400
+@       IN      SOA     ns1.in.rounds.house. admin.rounds.house. (
+                        2025010801  ; Serial (Format: YYYYMMDDNN)
+                        30m         ; Refresh
+                        15m         ; Retry
+                        2w          ; Expire
+                        1h )        ; Minimum TTL
+
+; Define the DNS servers for the domain
+@				    IN		NS      ns1.in.rounds.house.
+@				    IN		NS      ns2.in.rounds.house.
+
+; A Record for the Root Domain
+@				    IN      A       10.10.10.40 ; homepage
+
+; Define the A records for the nameservers
+ns1                 IN      A       10.10.10.41 ; docker - zima (primary)
+ns2                 IN      A       10.10.10.40 ; docker - nuc (secondary)
+
+; Define the A records for the proxies
+proxy               IN      A   10.10.10.40 ; proxy - traefik
+
+; Define the A records for other hosts
+nuc.metal           IN      A       10.10.10.30 ; nuc
+zima.metal          IN      A       10.10.10.31 ; zima board
+mini.metal          IN      A       10.10.10.32 ; mac mini
+synology.metal      IN      A       10.10.10.50 ; synology nas
+zigbee.metal        IN      A       10.10.10.60 ; zigbee controller
+udmp.metal          IN      A       10.10.10.1  ; udmp
+
+mqtt                IN      A       10.10.10.40 ; mqtt
+
+; Define the A records for VMs
+ha.vm               IN      A       10.10.10.45 ; home assistant vm
+docker.vm           IN      A       10.10.10.40 ; docker vm
+
+; Define the A records for proxied services
+pve                 IN      CNAME   proxy ; pve - proxied 10.10.10.30
+zima                IN      CNAME   proxy ; zima - proxied 10.10.10.31
+mini                IN      CNAME   proxy ; mini - proxied 10.10.10.32
+ha                  IN      CNAME   proxy ; ha - proxied 10.10.10.45
+synology            IN      CNAME   proxy ; synology - proxied 10.10.10.50
+zigbee-controller   IN      CNAME   proxy ; zigbee SLZB06 - proxied 10.10.10.60
+udmp                IN      CNAME   proxy ; udmp - proxied 10.10.10.1
+unifi               IN      CNAME   proxy ; unifi - proxied 10.10.10.1
+
+; Wildcard record for all subdomains
+*                   IN      A       10.10.10.40 ; wildcard for all subdomains (e.g., *.in.rounds.house)
+
+; ******************************************************
+; DONT FORGET TO UPDATE THE SERIAL WHEN MAKING CHANGES *
+; ******************************************************

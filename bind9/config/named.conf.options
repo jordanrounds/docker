@@ -1,0 +1,23 @@
+options {
+        directory "/var/cache/bind";
+        
+        // External forwarders - bypasses UDMP to prevent loops
+        forwarders {
+                1.1.1.1;
+                1.0.0.1;
+                8.8.8.8;
+                8.8.4.4;
+        };
+        forward only;  // This is the key addition - forces use of forwarders only
+        
+        allow-query { any; };
+        // Allow queries from cache for internal network
+        allow-query-cache { internal; };
+        // Allow recursion for internal network
+        allow-recursion { internal; };
+        
+        dnssec-validation auto;
+        listen-on { any; };
+        listen-on-v6 { any; };
+        auth-nxdomain no;    # conform to RFC1035
+};

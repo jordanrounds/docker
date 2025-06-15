@@ -1,0 +1,23 @@
+options {
+    directory "/var/cache/bind";
+    
+    // Match master's forwarder configuration
+    forwarders {
+        1.1.1.1;      // Cloudflare
+        1.0.0.1;      // Cloudflare
+        8.8.8.8;      // Google
+        8.8.4.4;      // Google
+    };
+    forward only;     // Important: match master setting
+    
+    // Query permissions
+    allow-query { any; };
+    allow-query-cache { internal; };
+    allow-recursion { internal; };
+    
+    // Standard settings
+    dnssec-validation auto;
+    listen-on { any; };
+    listen-on-v6 { any; };
+    auth-nxdomain no;
+};

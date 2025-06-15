@@ -1,0 +1,16 @@
+include "/etc/bind/tsig.key";
+
+acl "internal" {
+    10.10.10.0/24;
+    localhost;
+    localnets;
+};
+
+zone "in.rounds.house" {
+    type slave;
+    file "/var/cache/bind/in.rounds.house.db";
+    masters { 
+        10.10.10.40 key tsig-key;  // Master with TSIG authentication
+    };
+    allow-query { any; };
+};

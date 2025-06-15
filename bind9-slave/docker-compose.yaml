@@ -1,0 +1,37 @@
+services:
+  bind9-slave:
+    image: ubuntu/bind9:9.18-22.04_edge  # Match master version
+    container_name: bind9-slave
+    hostname: ns2.in.rounds.house
+    restart: unless-stopped
+    ports:
+      - "5354:53/tcp"  # Test port (change to 53:53 for production)
+      - "5354:53/udp"  # Test port (change to 53:53 for production)
+    volumes:
+      - ./config:/etc/bind
+      - bind9_slave_cache:/var/cache/bind
+    networks:
+      - backend
+    secrets:
+      - bind9_tsig_key
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "cp /run/secrets/bind9_tsig_key /etc/bind/tsig.key &&
+       chmod 640 /etc/bind/tsig.key &&
+       chown root:bind /etc/bind/tsig.key &&
+       exec /usr/sbin/named -g -c /etc/bind/named.conf -u bind"
+    labels:
+      - "wud.tag.include=^\\d+\\.\\d+-\\d+\\.\\d+_edge$$"
+      - "wud.link.template=https://hub.docker.com/r/ubuntu/bind9/tags"
+
+volumes:
+  bind9_slave_cache:
+    name: bind9_slave_cache
+
+secrets:
+  bind9_tsig_key:
+    file: ${SECRETS}/bind9.tsig.key
+
+networks:
+  backend:
+    external: true
