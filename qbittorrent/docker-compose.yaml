@@ -1,7 +1,7 @@
 services:
   qbittorrent:
     #image: lscr.io/linuxserver/qbittorrent:latest
-    image: linuxserver/qbittorrent:latest
+    image: linuxserver/qbittorrent:5.0.0
     container_name: qbittorrent
     environment:
       PUID: "${PUID}"
@@ -31,7 +31,7 @@ services:
       traefik.http.services.qbittorrent.loadbalancer.server.port: '8080'
       traefik.docker.network: 'frontend'
 
-      wud.tag.include: '^\d+\.\d+\.\d+$'
+      wud.tag.include: '^\d\.\d+\.\d+$' # single digit major version, otherwise finds weird version 20 tags
       wud.link.template: 'https://www.qbittorrent.org/news'
       wud.display.name: 'qBittorrent'
       wud.display.icon: 'sh:qbittorrent'
@@ -41,7 +41,7 @@ volumes:
   config:
     name: qbittorrent_config
   torrent:
-    name: data_torrent
+    name: nfs_torrent
     external: true
 
 networks:

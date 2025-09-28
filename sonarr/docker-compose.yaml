@@ -1,0 +1,42 @@
+services:
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
+    volumes:
+      - config:/config
+      - data:/data
+      - torrent:/torrent
+    ports:
+      - 8989:8989
+    networks:
+      - frontend
+    restart: unless-stopped
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.sonarr.rule: 'Host(`sonarr.in.rounds.house`)'
+      traefik.http.routers.sonarr.entrypoints: 'https'
+      traefik.http.routers.sonarr.tls: 'true'
+      traefik.http.services.sonarr.loadbalancer.server.port: '8989'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/linuxserver/docker-sonarr/releases'
+      wud.display.name: 'Sonarr'
+      wud.display.icon: 'sh:sonarr'
+
+volumes:
+  config:
+    name: sonarr_config
+  torrent:
+    name: nfs_torrent
+    external: true
+  data:
+    name: nfs_data
+    external: true
+
+networks:
+  frontend:
+    external: true

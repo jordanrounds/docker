@@ -4,7 +4,7 @@ services:
     container_name: filebot-node
     volumes:
       - data:/data
-      - output:/volume1
+      - output:/output
       - input:/input
     ports:
       - '5452:5452'
@@ -30,9 +30,12 @@ volumes:
     name: nfs_media
     external: true
   input:
-    name: data_torrent
+    name: nfs_torrent
     external: true
 
 networks:
   frontend:
     external: true
+
+# Movies/{n} ({y})/{n} ({y}) {"{tmdb-$tmdbid}"} {"{edition-$edition}"} {"[{cf}]"}{"[$vs-$vf]"}{"[$s3d]"}{"[$hdr]"}{"[{ac} {channels}]"}{"[{vc}]"}{"-$group"}
+#     { plex % {" {tmdb-$tmdbid}"} % {" {imdb-$imdbid}"} % {"{edition-$edition}"} % {" [$vs-$vf]"} % {" [$s3d]"} % {" [$hdr]"} % {" [$ac $channels]" } % {" [$vc]"} % {" -$group"} }

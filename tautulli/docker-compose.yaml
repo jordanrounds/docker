@@ -10,8 +10,26 @@ services:
       - config:/config
     ports:
       - 8181:8181
+    networks:
+      - frontend
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.tautulli.rule: 'Host(`tautulli.in.rounds.house`)'
+      traefik.http.routers.tautulli.entrypoints: 'https'
+      traefik.http.routers.tautulli.tls: 'true'
+      traefik.http.services.tautulli.loadbalancer.server.port: '8181'
+      traefik.docker.network: 'frontend'
+
+      wud.tag.include: '^\d+\.\d+\.\d+$$'
+      wud.link.template: 'https://github.com/linuxserver/docker-tautulli/releases'
+      wud.display.name: 'Tautulli'
+      wud.display.icon: 'sh:tautulli'
     restart: unless-stopped
   
 volumes:
   config:
     name: tautulli_config
+
+networks:
+  frontend:
+    external: true

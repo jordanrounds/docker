@@ -36,7 +36,7 @@ volumes:
   config: 
     name: flexget_config
   downloads:
-    name: data_torrent
+    name: nfs_torrent
     external: true
 
 networks:

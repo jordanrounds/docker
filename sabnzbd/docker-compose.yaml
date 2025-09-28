@@ -1,0 +1,46 @@
+services:
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
+    volumes:
+      - config:/config
+      - data:/data/usenet
+      #- /path/to/downloads:/downloads #optional
+      #- /path/to/incomplete/downloads:/incomplete-downloads #optional
+    ports:
+      - 8082:8080
+    networks:
+      - frontend
+    restart: unless-stopped
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.sabnzbd.rule: 'Host(`sabnzbd.in.rounds.house`)'
+      traefik.http.routers.sabnzbd.entrypoints: 'https'
+      traefik.http.routers.sabnzbd.tls: 'true'
+      traefik.http.services.sabnzbd.loadbalancer.server.port: '8080'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/linuxserver/docker-sabnzbd/releases'
+      wud.display.name: 'sabnzbd'
+      wud.display.icon: 'sh:sabnzbd'
+
+volumes:
+  config:
+    name: sabnzbd_config
+  data:
+    name: nfs_data_usenet
+    external: true
+  # media:
+  #   name: nfs_media
+  #   external: true
+  # test:
+  #   name: nfs_test
+  #   external: true
+
+networks:
+  frontend:
+    external: true

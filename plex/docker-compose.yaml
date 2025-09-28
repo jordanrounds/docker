@@ -5,11 +5,16 @@ services:
     container_name: plex
     ports:
       # Plex DLNA Server
-      - '1900:1900/udp'
-      - '32410:32410/udp'
-      - '32412:32412/udp'
-      - '32413:32413/udp'
-      - '32414:32414/udp'
+      - 32400:32400/tcp
+      - 32400:32400/udp
+      - 3005:3005/tcp
+      - 8324:8324/tcp
+      - 32469:32469/tcp
+      - 1900:1900/udp
+      - 32410:32410/udp
+      - 32412:32412/udp
+      - 32413:32413/udp
+      - 32414:32414/udp
     networks:
       - frontend
     devices:
@@ -23,7 +28,11 @@ services:
       FILE__PLEX_CLAIM: /run/secrets/claim
     volumes:
       - config:/config
-      - media:/media
+        #- media:/media
+      - data:/data
+      - /tmp/plex-transcode:/transcode # Transcoding temp directory, control where transcodes are stored
+      # Default Linux only allocates a max of 50% of total system RAM to any ram directories (ie. /tmp, /dev/shm, etc.)
+
     secrets:
       - claim
     labels:
@@ -42,8 +51,8 @@ services:
 volumes:
   config:
     name: plex_config
-  media:
-    name: nfs_media
+  data:
+    name: nfs_data
     external: true
 
 secrets:

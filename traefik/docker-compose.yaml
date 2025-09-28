@@ -1,7 +1,9 @@
 services:
   traefik:
-    image: traefik:v3.0
+    image: traefik:v3.2
     container_name: traefik
+    mem_limit: 512m
+    mem_reservation: 256m
     environment:
       DNSIMPLE_OAUTH_TOKEN_FILE: /run/secrets/dnsimple_oauth_token
     secrets:

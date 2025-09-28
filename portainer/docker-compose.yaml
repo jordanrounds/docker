@@ -1,11 +1,11 @@
 services:
   portainer:
-    image: portainer/portainer-ce:2.23.0-alpine
+    image: portainer/portainer-ce:latest
     container_name: portainer
     environment:
       TZ: "${TZ}"
     ports:
-      # - '9000:9000'
+      - '9000:9000'
       - '9443:9443'
       - '8000:8000'
     volumes:

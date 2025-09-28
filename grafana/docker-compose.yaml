@@ -1,0 +1,35 @@
+services:
+  grafana:
+    image: grafana/grafana:11.3.0-security-01
+    container_name: grafana
+    restart: unless-stopped
+    user: ${PUID}:${PGID}
+    ports:
+      - '3003:3000'
+    volumes:
+      - storage:/var/lib/grafana
+    networks:
+      - frontend
+      - backend
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.grafana.rule: 'Host(`grafana.in.rounds.house`)'
+      traefik.http.routers.grafana.entrypoints: 'https'
+      traefik.http.routers.grafana.tls: 'true'
+      traefik.http.services.grafana.loadbalancer.server.port: '3000'
+      traefik.docker.network: 'frontend'
+
+      wud.tag.include: '^\d+\.\d+\.\d+$$'
+      wud.link.template: 'https://github.com/grafana/grafana/releases/tag/$${major}.$${minor}.$${patch}'
+      wud.display.name: 'Grafana'
+      wud.display.icon: 'sh:grafana'
+
+volumes:
+  storage:
+    name: grafana_storage
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true

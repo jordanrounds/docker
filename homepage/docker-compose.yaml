@@ -12,6 +12,8 @@ services:
       HOMEPAGE_FILE_PLEX_KEY: /run/secrets/plex_key
       HOMEPAGE_FILE_PVE_USERNAME: /run/secrets/pve_username
       HOMEPAGE_FILE_PVE_PASSWORD: /run/secrets/pve_password
+      HOMEPAGE_FILE_GRAFANA_USERNAME: /run/secrets/grafana_username
+      HOMEPAGE_FILE_GRAFANA_PASSWORD: /run/secrets/grafana_password
     secrets:
       - portainer_key
       - qbittorrent_username
@@ -19,6 +21,8 @@ services:
       - plex_key
       - pve_username
       - pve_password
+      - grafana_username
+      - grafana_password
     ports:
       - '3001:3000'
     volumes:
@@ -60,3 +64,7 @@ secrets:
     file: ${SECRETS}/pve.api.username
   pve_password:
     file: ${SECRETS}/pve.api.password
+  grafana_username:
+    file: ${SECRETS}/grafana.username
+  grafana_password:
+    file: ${SECRETS}/grafana.password

@@ -1,0 +1,35 @@
+services:
+  nzbhydra:
+    image: lscr.io/linuxserver/nzbhydra2:latest
+    container_name: nzbhydra
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
+    volumes:
+      - config:/config
+      #- /path/to/downloads:/downloads #optional
+    ports:
+      - 5076:5076
+    networks:
+      - frontend
+    restart: unless-stopped
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.nzbhydra.rule: 'Host(`nzbhydra.in.rounds.house`)'
+      traefik.http.routers.nzbhydra.entrypoints: 'https'
+      traefik.http.routers.nzbhydra.tls: 'true'
+      traefik.http.services.nzbhydra.loadbalancer.server.port: '5076'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/linuxserver/docker-nzbhydra2/releases'
+      wud.display.name: 'nzbhydra'
+      wud.display.icon: 'sh:nzbhydra'
+
+volumes:
+  config:
+    name: nzbhydra_config
+
+networks:
+  frontend:
+    external: true

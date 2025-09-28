@@ -30,7 +30,7 @@ volumes:
   config:
     name: file-browser_config
   torrent:
-    name: data_torrent
+    name: nfs_torrent
     external: true
 
 networks:

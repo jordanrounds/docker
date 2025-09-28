@@ -1,0 +1,40 @@
+services:
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr-4k
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
+    volumes:
+      - config:/config
+      - data:/data
+    ports:
+      - 6768:6767
+    networks:
+      - frontend
+    restart: unless-stopped
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.bazarr-4k.rule: 'Host(`bazarr-4k.in.rounds.house`)'
+      traefik.http.routers.bazarr-4k.entrypoints: 'https'
+      traefik.http.routers.bazarr-4k.tls: 'true'
+      traefik.http.services.bazarr-4k.loadbalancer.server.port: '6767'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/linuxserver/docker-bazarr/releases'
+      wud.display.name: 'bazarr'
+      wud.display.icon: 'sh:bazarr'
+
+volumes:
+  config:
+    name: bazarr-4k_config
+  media:
+    name: nfs_media
+    external: true
+  data:
+    name: nfs_data
+    external: true
+networks:
+  frontend:
+    external: true

@@ -1,0 +1,42 @@
+services:
+  radarr-4k:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr-4k
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
+    volumes:
+      - config:/config
+      - data:/data
+      - torrent:/torrent
+    ports:
+      - 7879:7878
+    networks:
+      - frontend
+    restart: unless-stopped
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.radarr-4k.rule: 'Host(`radarr-4k.in.rounds.house`)'
+      traefik.http.routers.radarr-4k.entrypoints: 'https'
+      traefik.http.routers.radarr-4k.tls: 'true'
+      traefik.http.services.radarr-4k.loadbalancer.server.port: '7878'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/linuxserver/docker-radarr/releases'
+      wud.display.name: 'Radarr 4K'
+      wud.display.icon: 'sh:radarr'
+
+volumes:
+  config:
+    name: radarr-4k_config
+  torrent:
+    name: nfs_torrent
+    external: true
+  data:
+    name: nfs_data
+    external: true
+
+networks:
+  frontend:
+    external: true

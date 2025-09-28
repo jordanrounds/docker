@@ -1,12 +1,25 @@
-# Full Docker Setup
-This is my entire Docker setup. Each directory contains a docker-compose file to setup the containers.
+# Docker Setup
 
-There is a docker-setup.sh script include that will setup everything post install of docker.
+## Commands
 
-This includes the creation of all directories, installation of the local persist plugin, and setting some environment variables.
+Remove all images not associated with a container
+```bash
+docker image prune
+```
 
-Most of these containers are in some way related to Home Assitant or home automation generally.
+Remove anonymous local volumes not used by at least one container
+```bash
+docker volume prune
+```
 
+List unused named volumes and anonymous
+```bash
+docker volume ls -f dangling=true
+```
+
+Remove anonymous and named dangling volumes
+```bash
+docker volume rm $(docker volume ls -qf dangling=true)
+```
 ## Reference
 [Docker Secrets](https://docs.docker.com/compose/compose-file/#secrets)
-[Local Persist](https://github.com/MatchbookLab/local-persist)

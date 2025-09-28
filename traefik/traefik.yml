@@ -1,6 +1,6 @@
 api:
   dashboard: true
-  debug: true
+  debug: false
 
 entryPoints:
   http:
@@ -17,7 +17,7 @@ serversTransport:
   insecureSkipVerify: true # let proxmox work
 
 log:
-  level: DEBUG
+  level: INFO
 #   level: INFO
 #   level: WARN
 

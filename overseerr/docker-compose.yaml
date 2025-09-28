@@ -1,0 +1,34 @@
+services:
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
+    volumes:
+      - config:/config
+    ports:
+      - 5055:5055
+    networks:
+      - frontend
+    restart: unless-stopped
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.overseerr.rule: 'Host(`overseerr.in.rounds.house`)'
+      traefik.http.routers.overseerr.entrypoints: 'https'
+      traefik.http.routers.overseerr.tls: 'true'
+      traefik.http.services.overseerr.loadbalancer.server.port: '5055'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/linuxserver/docker-overseerr/releases'
+      wud.display.name: 'overseerr'
+      wud.display.icon: 'sh:overseerr'
+
+volumes:
+  config:
+    name: overseerr_config
+
+networks:
+  frontend:
+    external: true

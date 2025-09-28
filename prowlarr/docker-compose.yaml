@@ -1,0 +1,34 @@
+services:
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      TZ: "${TZ}"
+    volumes:
+      - config:/config
+    ports:
+      - 9696:9696
+    networks:
+      - frontend
+    restart: unless-stopped
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.prowlarr.rule: 'Host(`prowlarr.in.rounds.house`)'
+      traefik.http.routers.prowlarr.entrypoints: 'https'
+      traefik.http.routers.prowlarr.tls: 'true'
+      traefik.http.services.prowlarr.loadbalancer.server.port: '9696'
+      traefik.docker.network: 'frontend'
+
+      wud.link.template: 'https://github.com/linuxserver/docker-prowlarr/releases'
+      wud.display.name: 'Prowlarr'
+      wud.display.icon: 'sh:prowlarr'
+
+volumes:
+  config:
+    name: prowlarr_config
+
+networks:
+  frontend:
+    external: true
