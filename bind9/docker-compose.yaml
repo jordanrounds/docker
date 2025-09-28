@@ -1,6 +1,6 @@
 services:
   bind9-test:
-    image: ubuntu/s9.18-22.04_beta
+    image: ubuntu/bind9:9.18-22.04_beta
     #image: ubuntu/bind9:9.18-22.04_edge
     container_name: bind9-test
     environment:
