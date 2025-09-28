@@ -30,6 +30,24 @@ http:
       rule: "Host(`zima.in.rounds.house`)"
       service: zima
       tls: true
+    unifi:
+      entryPoints:
+        - "https"
+      rule: "Host(`unifi.in.rounds.house`)"
+      service: unifi
+      tls: true
+    udmp:
+      entryPoints:
+        - "https"
+      rule: "Host(`udmp.in.rounds.house`)"
+      service: unifi
+      tls: true
+    mini:
+      entryPoints:
+        - "https"
+      rule: "Host(`mini.in.rounds.house`)"
+      service: mini
+      tls: true
       
   services:
     pve:
@@ -56,6 +74,16 @@ http:
       loadBalancer:
         servers:
           - url: "https://zima.metal.in.rounds.house:8006"
+        passHostHeader: true
+    unifi:
+      loadBalancer:
+        servers:
+          - url: "https://udmp.metal.in.rounds.house"
+        passHostHeader: true
+    mini:
+      loadBalancer:
+        servers:
+          - url: "https://mini.metal.in.rounds.house:8006"
         passHostHeader: true
 
 
