@@ -1,0 +1,7 @@
+# Secrets and API keys
+config/secrets.yml
+
+# Runtime data
+config/cache/
+config/logs/
+config/repositories/

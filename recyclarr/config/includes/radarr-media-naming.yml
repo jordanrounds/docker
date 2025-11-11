@@ -1,0 +1,5 @@
+media_naming:
+  folder: plex-tmdb
+  movie:
+    rename: true
+    standard: plex-tmdb

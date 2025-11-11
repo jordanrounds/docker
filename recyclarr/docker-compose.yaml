@@ -1,0 +1,28 @@
+services:
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr
+    container_name: recyclarr
+    user: "${PUID}:${PGID}"
+    networks:
+      - frontend
+    volumes:
+      - ./config:/config
+    environment:
+      TZ: "${TZ}"
+
+volumes:
+  config:
+    name: radarr_config
+  media:
+    name: nfs_media
+    external: true
+  test:
+    name: nfs_test
+    external: true
+  torrent:
+    name: nfs_torrent
+    external: true
+
+networks:
+  frontend:
+    external: true
