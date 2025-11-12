@@ -6,6 +6,7 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       TZ: "${TZ}"
+      HOMEPAGE_ALLOWED_HOSTS: "in.rounds.house"
       HOMEPAGE_FILE_PORTAINER_KEY: /run/secrets/portainer_key
       HOMEPAGE_FILE_QBITTORRENT_USERNAME: /run/secrets/qbittorrent_username
       HOMEPAGE_FILE_QBITTORRENT_PASSWORD: /run/secrets/qbittorrent_password
