@@ -18,8 +18,6 @@ serversTransport:
 
 log:
   level: INFO
-#   level: INFO
-#   level: WARN
 
 providers:
   docker:
@@ -27,17 +25,16 @@ providers:
     exposedByDefault: false
   file:
     directory: /config
+    watch: false  # fixes known memory leak
 
 certificatesResolvers:
   dnsimple:
     acme:
       email: jrounds@mac.com
       storage: /letsencrypt/acme.json
-      caServer: https://acme-v02.api.letsencrypt.org/directory # For production
-      #caServer: https://acme-staging-v02.api.letsencrypt.org/directory # For testing
+      caServer: https://acme-v02.api.letsencrypt.org/directory
       dnsChallenge:
         provider: dnsimple
         resolvers:
           - "1.1.1.1:53"
           - "1.0.0.1:53"
-

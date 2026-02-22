@@ -1,4 +1,9 @@
 http:
+  serversTransports:
+    nohttp2:
+      disableHTTP2: true
+      insecureSkipVerify: true
+
   routers:
     pve:
       entryPoints:
@@ -77,6 +82,7 @@ http:
         passHostHeader: true
     unifi:
       loadBalancer:
+        serversTransport: nohttp2@file
         servers:
           - url: "https://udmp.metal.in.rounds.house"
         passHostHeader: true
