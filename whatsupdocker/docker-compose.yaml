@@ -1,6 +1,6 @@
 services:
   whatsupdocker:
-    image: getwud/wud
+    image: getwud/wud:main
     container_name: wud
     environment:
       TZ: "${TZ}"
