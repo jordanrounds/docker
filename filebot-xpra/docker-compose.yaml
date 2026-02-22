@@ -1,0 +1,40 @@
+services:
+  filebot:
+    container_name: filebot-xpra
+    image: rednoah/filebot:xpra
+    restart: unless-stopped
+    volumes:
+      - data:/data
+      - output:/output
+      - input:/input
+      - test:/test
+    ports:
+      - 5454:5454
+    environment:
+      - XPRA_AUTH=password:value=password
+    networks:
+      - frontend
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.filebot-xpra.rule: 'Host(`filebot-xpra.in.rounds.house`)'
+      traefik.http.routers.filebot-xpra.entrypoints: 'https'
+      traefik.http.routers.filebot-xpra.tls: 'true'
+      traefik.http.services.filebot-xpra.loadbalancer.server.port: '5454'
+      traefik.docker.network: 'frontend'
+
+volumes:
+  data:
+    name: filebot-xpra_data
+  output:
+    name: nfs_media
+    external: true
+  input:
+    name: nfs_torrent
+    external: true
+  test:
+    name: nfs_test
+    external: true
+
+networks:
+  frontend:
+    external: true
