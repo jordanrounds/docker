@@ -1,0 +1,38 @@
+services:
+  telegraf:
+    image: telegraf:1.33
+    container_name: telegraf
+    hostname: docker-server
+    environment:
+      - HOST_ETC=/hostfs/etc
+      - HOST_PROC=/hostfs/proc
+      - HOST_SYS=/hostfs/sys
+      - HOST_VAR=/hostfs/var
+      - HOST_RUN=/hostfs/run
+      - HOST_MOUNT_PREFIX=/hostfs
+    env_file:
+      - .env
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc:/hostfs/proc:ro
+      - /sys:/hostfs/sys:ro
+      - /etc:/hostfs/etc:ro
+      - /var:/hostfs/var:ro
+      - /run:/hostfs/run:ro
+    mem_limit: 64m
+    mem_reservation: 32m
+    networks:
+      - backend
+    labels:
+      wud.tag.include: '^\d+\.\d+$$'
+      wud.link.template: 'https://github.com/influxdata/telegraf/releases/tag/v$${major}.$${minor}.0'
+      wud.display.name: 'Telegraf'
+      wud.display.icon: 'sh:influxdb'
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  backend:
+    external: true

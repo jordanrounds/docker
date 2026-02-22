@@ -1,0 +1,30 @@
+apiVersion: 1
+
+datasources:
+  # Loki for log aggregation
+  - name: Loki
+    uid: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    isDefault: false
+    editable: true
+    jsonData:
+      timeout: 60
+      maxLines: 1000
+
+  # InfluxDB2 for metrics
+  - name: InfluxDB2
+    uid: InfluxDB2
+    type: influxdb
+    access: proxy
+    url: http://influxdb2:8086
+    isDefault: true
+    editable: true
+    jsonData:
+      version: Flux
+      organization: rounds.house
+      defaultBucket: docker
+      tlsSkipVerify: false
+    secureJsonData:
+      token: $__file{/run/secrets/influx-token}

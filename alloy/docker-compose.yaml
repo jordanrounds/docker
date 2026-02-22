@@ -1,0 +1,39 @@
+services:
+  alloy:
+    image: grafana/alloy:v1.5.1
+    container_name: alloy
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - data:/var/lib/alloy/data
+    mem_limit: 128m
+    mem_reservation: 64m
+    healthcheck:
+      test: ["CMD", "/bin/alloy", "tools", "--help"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - backend
+    labels:
+      wud.tag.include: '^v\d+\.\d+\.\d+$$'
+      wud.link.template: 'https://github.com/grafana/alloy/releases/tag/v$${major}.$${minor}.$${patch}'
+      wud.display.name: 'Alloy'
+      wud.display.icon: 'sh:grafana'
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  data:
+    name: alloy_data
+
+networks:
+  backend:
+    external: true

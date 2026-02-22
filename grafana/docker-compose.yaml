@@ -1,13 +1,26 @@
 services:
   grafana:
-    image: grafana/grafana:11.3.0-security-01
+    image: grafana/grafana:11.4.0
     container_name: grafana
     restart: unless-stopped
     user: ${PUID}:${PGID}
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+    secrets:
+      - influx-token
     ports:
       - '3003:3000'
     volumes:
       - storage:/var/lib/grafana
+      - ./provisioning:/etc/grafana/provisioning:ro
+    mem_limit: 256m
+    mem_reservation: 128m
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     networks:
       - frontend
       - backend
@@ -23,6 +36,12 @@ services:
       wud.link.template: 'https://github.com/grafana/grafana/releases/tag/$${major}.$${minor}.$${patch}'
       wud.display.name: 'Grafana'
       wud.display.icon: 'sh:grafana'
+    security_opt:
+      - no-new-privileges:true
+
+secrets:
+  influx-token:
+    file: ${SECRETS}/influxdb2.token
 
 volumes:
   storage:

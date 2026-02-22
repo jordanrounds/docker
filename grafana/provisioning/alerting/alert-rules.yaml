@@ -1,0 +1,279 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: Docker Alerts
+    folder: Docker
+    interval: 1m
+    rules:
+      # High Memory Usage Alert
+      - uid: high-memory-usage
+        title: High Container Memory Usage
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: InfluxDB2
+            model:
+              query: |
+                from(bucket: "docker")
+                  |> range(start: -5m)
+                  |> filter(fn: (r) => r._measurement == "docker_container_mem")
+                  |> filter(fn: (r) => r._field == "usage_percent")
+                  |> group(columns: ["container_name"])
+                  |> mean()
+                  |> filter(fn: (r) => r._value > 90)
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    type: last
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 90
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+              refId: C
+              type: threshold
+              expression: B
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: Container {{ $labels.container_name }} memory usage above 90%
+          description: Container {{ $labels.container_name }} is using {{ $values.B }}% of its memory limit
+        labels:
+          severity: warning
+
+      # Disk Space Low Alert
+      - uid: disk-space-low
+        title: Host Disk Space Low
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: InfluxDB2
+            model:
+              query: |
+                from(bucket: "docker")
+                  |> range(start: -5m)
+                  |> filter(fn: (r) => r._measurement == "disk")
+                  |> filter(fn: (r) => r._field == "used_percent")
+                  |> filter(fn: (r) => r.path == "/")
+                  |> last()
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 85
+                    type: gt
+              refId: C
+              type: threshold
+              expression: B
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: Host disk usage above 85%
+          description: Root filesystem is {{ $values.B }}% full
+        labels:
+          severity: warning
+
+      # Container Restart Loop Alert
+      - uid: container-restart-loop
+        title: Container Restart Loop
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: InfluxDB2
+            model:
+              query: |
+                from(bucket: "docker")
+                  |> range(start: -10m)
+                  |> filter(fn: (r) => r._measurement == "docker_container_status")
+                  |> filter(fn: (r) => r._field == "started_at")
+                  |> group(columns: ["container_name"])
+                  |> count()
+                  |> filter(fn: (r) => r._value > 3)
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 3
+                    type: gt
+              refId: C
+              type: threshold
+              expression: B
+        noDataState: NoData
+        execErrState: Error
+        for: 0s
+        annotations:
+          summary: Container {{ $labels.container_name }} restarting frequently
+          description: Container {{ $labels.container_name }} has restarted {{ $values.B }} times in the last 10 minutes
+        labels:
+          severity: critical
+
+      # Log Error Spike Alert
+      - uid: log-error-spike
+        title: Log Error Spike
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: Loki
+            model:
+              expr: sum by (container_name) (count_over_time({container_name=~".+"} |~ "(?i)(error|exception|fatal|panic)" [1m]))
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 10
+                    type: gt
+              refId: C
+              type: threshold
+              expression: B
+        noDataState: NoData
+        execErrState: Error
+        for: 2m
+        annotations:
+          summary: High error rate in {{ $labels.container_name }}
+          description: Container {{ $labels.container_name }} logged {{ $values.B }} errors in the last minute
+        labels:
+          severity: warning
+
+      # High CPU Usage Alert
+      - uid: high-cpu-usage
+        title: High Container CPU Usage
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: InfluxDB2
+            model:
+              query: |
+                from(bucket: "docker")
+                  |> range(start: -5m)
+                  |> filter(fn: (r) => r._measurement == "docker_container_cpu")
+                  |> filter(fn: (r) => r._field == "usage_percent")
+                  |> group(columns: ["container_name"])
+                  |> mean()
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 90
+                    type: gt
+              refId: C
+              type: threshold
+              expression: B
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: Container {{ $labels.container_name }} CPU usage above 90%
+          description: Container {{ $labels.container_name }} is using {{ $values.B }}% CPU
+        labels:
+          severity: warning

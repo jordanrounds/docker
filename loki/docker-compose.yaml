@@ -1,0 +1,44 @@
+services:
+  loki:
+    image: grafana/loki:3.4.2
+    container_name: loki
+    volumes:
+      - ./config.yaml:/etc/loki/config.yaml:ro
+      - data:/loki
+    command: -config.file=/etc/loki/config.yaml
+    mem_limit: 512m
+    mem_reservation: 256m
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3100/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - frontend
+      - backend
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.loki.rule: 'Host(`loki.in.rounds.house`)'
+      traefik.http.routers.loki.entrypoints: 'https'
+      traefik.http.routers.loki.tls: 'true'
+      traefik.http.services.loki.loadbalancer.server.port: '3100'
+      traefik.docker.network: 'frontend'
+
+      wud.tag.include: '^\d+\.\d+\.\d+$$'
+      wud.link.template: 'https://github.com/grafana/loki/releases/tag/$${major}.$${minor}.$${patch}'
+      wud.display.name: 'Loki'
+      wud.display.icon: 'sh:loki'
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  data:
+    name: loki_data
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true

@@ -1,0 +1,78 @@
+// Grafana Alloy configuration for Docker log collection
+// Collects logs from all Docker containers and ships to Loki
+
+// Discover Docker containers
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+// Relabel discovered targets to extract useful labels
+discovery.relabel "docker" {
+  targets = discovery.docker.containers.targets
+
+  // Keep container name
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container_name"
+  }
+
+  // Extract compose project name
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_project"]
+    target_label  = "compose_project"
+  }
+
+  // Extract compose service name
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "compose_service"
+  }
+
+  // Set job label
+  rule {
+    replacement  = "docker"
+    target_label = "job"
+  }
+}
+
+// Collect logs from Docker containers
+loki.source.docker "default" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.docker.output
+  forward_to = [loki.process.docker.receiver]
+
+  // Refresh container list every 5 seconds
+  refresh_interval = "5s"
+}
+
+// Process logs - parse Docker JSON format and add labels
+loki.process "docker" {
+  // Parse Docker JSON log format
+  stage.docker {}
+
+  // Drop empty log lines
+  stage.match {
+    selector = "{job=\"docker\"}"
+
+    stage.drop {
+      expression = "^\\s*$"
+    }
+  }
+
+  forward_to = [loki.write.local.receiver]
+}
+
+// Send logs to Loki
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+
+    // Batch settings for efficiency
+    batch_wait = "1s"
+  }
+
+  external_labels = {
+    source = "alloy",
+  }
+}
