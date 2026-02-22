@@ -24,7 +24,7 @@ services:
       PGID: "${PGID}"
       TZ: "${TZ}"
       VERSION: docker
-      PLEX_LOG_DEBUG: '1'
+      # PLEX_LOG_DEBUG: '1'  # Disabled - excessive logging
       FILE__PLEX_CLAIM: /run/secrets/claim
     volumes:
       - config:/config
