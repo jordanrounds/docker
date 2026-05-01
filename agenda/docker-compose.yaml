@@ -1,0 +1,60 @@
+services:
+  agenda:
+    build: ./source
+    image: agenda:latest
+    container_name: agenda
+    environment:
+      TZ: "${TZ}"
+      NOTION_TOKEN: "${AGENDA_NOTION_TOKEN}"
+    volumes:
+      - data:/app/agendas
+      - ${DOCKER}/agenda/.schedule.json:/app/.schedule.json
+      # gcal-agenda hardcodes ~/.config/gcal-agenda/{credentials,token}.json.
+      # Container runs as root, so mount at /root/.config/gcal-agenda/.
+      - ${SECRETS}/agenda.google.credentials.json:/root/.config/gcal-agenda/credentials.json:ro
+      - ${SECRETS}/agenda.google.token.json:/root/.config/gcal-agenda/token.json:ro
+    networks:
+      - frontend
+    labels:
+      traefik.enable: 'true'
+
+      # HTTP -> HTTPS redirect
+      traefik.http.routers.agenda-http.rule: 'Host(`agenda.in.rounds.house`)'
+      traefik.http.routers.agenda-http.entrypoints: 'http'
+      traefik.http.routers.agenda-http.middlewares: 'agenda-redirect'
+      traefik.http.middlewares.agenda-redirect.redirectscheme.scheme: 'https'
+
+      # HTTPS (covered by the existing *.in.rounds.house wildcard cert)
+      traefik.http.routers.agenda.rule: 'Host(`agenda.in.rounds.house`)'
+      traefik.http.routers.agenda.entrypoints: 'https'
+      traefik.http.routers.agenda.tls: 'true'
+      traefik.http.services.agenda.loadbalancer.server.port: '3180'
+      traefik.docker.network: 'frontend'
+
+      wud.display.name: 'Family Agenda'
+      wud.display.icon: 'mdi:calendar-text'
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3180/api/agendas >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    mem_reservation: 256m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
+    restart: unless-stopped
+
+volumes:
+  data:
+    name: agenda_data
+
+networks:
+  frontend:
+    external: true

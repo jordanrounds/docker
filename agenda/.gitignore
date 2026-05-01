@@ -1,0 +1,6 @@
+# Cloned source repo built into the image. Tracked separately at
+# https://github.com/jordanrounds/family-meeting-agenda
+source/
+
+# Bind-mounted into the container; persists the cron schedule across restarts.
+.schedule.json
