@@ -1,3 +1,6 @@
+ping:
+  entryPoint: http
+
 api:
   dashboard: true
   debug: false

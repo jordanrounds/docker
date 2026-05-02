@@ -277,3 +277,252 @@ groups:
           description: Container {{ $labels.container_name }} is using {{ $values.B }}% CPU
         labels:
           severity: warning
+
+      # Container Down Alert
+      - uid: container-down
+        title: Container Down
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: InfluxDB2
+            model:
+              query: |
+                from(bucket: "telegraf")
+                  |> range(start: -5m)
+                  |> filter(fn: (r) => r._measurement == "docker_container_status" and r._field == "container_id")
+                  |> group(columns: ["container_name"])
+                  |> last()
+                  |> map(fn: (r) => ({r with _value: if int(v: now()) - int(v: r._time) > 120000000000 then 1 else 0}))
+                  |> filter(fn: (r) => r._value == 1)
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+              refId: C
+              type: threshold
+              expression: B
+        noDataState: NoData
+        execErrState: Error
+        for: 2m
+        annotations:
+          summary: Container {{ $labels.container_name }} is down
+          description: Container {{ $labels.container_name }} has stopped reporting metrics for over 2 minutes
+        labels:
+          severity: critical
+
+      # Health Check Failure Alert
+      - uid: health-check-failure
+        title: Container Health Check Failure
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: InfluxDB2
+            model:
+              query: |
+                from(bucket: "telegraf")
+                  |> range(start: -5m)
+                  |> filter(fn: (r) => r._measurement == "docker_container_health" and r._field == "health_status")
+                  |> last()
+                  |> filter(fn: (r) => r._value != "healthy")
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+              refId: C
+              type: threshold
+              expression: B
+        noDataState: NoData
+        execErrState: Error
+        for: 2m
+        annotations:
+          summary: Container {{ $labels.container_name }} health check failing
+          description: Container {{ $labels.container_name }} health status is {{ $values.B }}
+        labels:
+          severity: warning
+
+      # Loki Ingestion Failure Alert
+      - uid: loki-ingestion-failure
+        title: Loki Ingestion Failure
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: Loki
+            model:
+              expr: count_over_time({container="alloy"} |~ `timestamp too old|rate limit` [5m])
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 5
+                    type: gt
+              refId: C
+              type: threshold
+              expression: B
+        noDataState: NoData
+        execErrState: Error
+        for: 0s
+        annotations:
+          summary: Loki ingestion failures detected
+          description: Alloy container is logging ingestion errors (timestamp too old or rate limit)
+        labels:
+          severity: warning
+
+      # NFS Mount Failure Alert
+      - uid: nfs-mount-failure
+        title: NFS Mount Failure
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: InfluxDB2
+            model:
+              query: |
+                from(bucket: "telegraf")
+                  |> range(start: -5m)
+                  |> filter(fn: (r) => r._measurement == "disk" and r._field == "total" and r.path =~ /\/mnt\/rounds-nas/)
+                  |> group(columns: ["path"])
+                  |> last()
+                  |> map(fn: (r) => ({r with _value: if r._value == 0 then 1 else 0}))
+                  |> filter(fn: (r) => r._value == 1)
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+              refId: C
+              type: threshold
+              expression: B
+        noDataState: NoData
+        execErrState: Error
+        for: 2m
+        annotations:
+          summary: NFS mount {{ $labels.path }} has failed
+          description: NFS mount at {{ $labels.path }} is reporting zero total disk space, indicating mount failure
+        labels:
+          severity: critical
+
+      # InfluxDB Write Failure Alert
+      - uid: influxdb-write-failure
+        title: InfluxDB Write Failure
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: Loki
+            model:
+              expr: count_over_time({container="telegraf"} |~ `write failed|bucket not found` [5m])
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 3
+                    type: gt
+              refId: C
+              type: threshold
+              expression: B
+        noDataState: NoData
+        execErrState: Error
+        for: 0s
+        annotations:
+          summary: InfluxDB write failures detected
+          description: Telegraf is logging InfluxDB write failures (write failed or bucket not found)
+        labels:
+          severity: warning

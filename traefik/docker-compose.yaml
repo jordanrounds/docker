@@ -3,7 +3,7 @@ services:
     image: traefik:v3.6.7
     container_name: traefik
     mem_limit: 1g
-    mem_reservation: 256m
+    mem_reservation: 512m
     environment:
       DNSIMPLE_OAUTH_TOKEN_FILE: /run/secrets/dnsimple_oauth_token
     secrets:
@@ -44,8 +44,20 @@ services:
       wud.link.template: 'https://github.com/traefik/traefik/releases/tag/v$${major}.$${minor}.$${patch}'
       wud.display.name: 'Traefik'
       wud.display.icon: 'sh:traefik'
+    healthcheck:
+      test: ["CMD-SHELL", "traefik healthcheck --ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     security_opt:
       - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
     restart: unless-stopped
 
 networks:
