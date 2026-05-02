@@ -9,6 +9,22 @@ services:
       TZ: ${TZ}
       MOSQUITTO_USERNAME: mos
       MOSQUITTO_PASSWORD_FILE: /run/secrets/password
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_sub -t '$$SYS/#' -C 1 -W 3 -u mos -P \"$$(cat /run/secrets/password)\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 64m
+    mem_reservation: 32m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
     restart: unless-stopped
     secrets:
       - password

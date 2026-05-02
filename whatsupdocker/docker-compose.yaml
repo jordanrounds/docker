@@ -37,6 +37,16 @@ services:
       wud.link.template: 'https://github.com/getwud/wud/releases/tag/$${major}.$${minor}.$${patch}'
       wud.display.name: 'Whats Up Docker?'
       wud.display.icon: 'sh:whats-up-docker-light'
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    mem_reservation: 128m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
     restart: unless-stopped
 
 volumes:

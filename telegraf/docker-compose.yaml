@@ -20,8 +20,8 @@ services:
       - /etc:/hostfs/etc:ro
       - /var:/hostfs/var:ro
       - /run:/hostfs/run:ro
-    mem_limit: 64m
-    mem_reservation: 32m
+    mem_limit: 128m
+    mem_reservation: 64m
     networks:
       - backend
     labels:

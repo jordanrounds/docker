@@ -46,6 +46,22 @@ services:
       wud.link.template: 'https://github.com/linuxserver/docker-plex/releases'
       wud.display.name: 'Plex'
       wud.display.icon: 'sh:plex'
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:32400/identity"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 2048m
+    mem_reservation: 1024m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
     restart: unless-stopped
 
 volumes:

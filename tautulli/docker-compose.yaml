@@ -24,8 +24,24 @@ services:
       wud.link.template: 'https://github.com/linuxserver/docker-tautulli/releases'
       wud.display.name: 'Tautulli'
       wud.display.icon: 'sh:tautulli'
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8181/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    mem_reservation: 128m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
     restart: unless-stopped
-  
+
 volumes:
   config:
     name: tautulli_config

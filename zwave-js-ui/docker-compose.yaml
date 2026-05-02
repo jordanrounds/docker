@@ -32,6 +32,22 @@ services:
     restart: unless-stopped
     tty: true
     stop_signal: SIGINT
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:8091/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    mem_reservation: 128m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
 
 volumes:
   config:

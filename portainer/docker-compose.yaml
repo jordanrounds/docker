@@ -27,6 +27,16 @@ services:
       wud.link.template: 'https://github.com/portainer/portainer/releases/tag/$${major}.$${minor}.$${patch}'
       wud.display.name: 'Portainer'
       wud.display.icon: 'sh:portainer'
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    mem_reservation: 128m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
     restart: always
 
 volumes:

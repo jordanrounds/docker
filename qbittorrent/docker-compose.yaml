@@ -31,10 +31,26 @@ services:
       traefik.http.services.qbittorrent.loadbalancer.server.port: '8080'
       traefik.docker.network: 'frontend'
 
-      wud.tag.include: '^\d\.\d+\.\d+$' # single digit major version, otherwise finds weird version 20 tags
+      wud.tag.include: '^\d\.\d+\.\d+$$' # single digit major version, otherwise finds weird version 20 tags
       wud.link.template: 'https://www.qbittorrent.org/news'
       wud.display.name: 'qBittorrent'
       wud.display.icon: 'sh:qbittorrent'
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080 -o /dev/null -w '%{http_code}' | grep -q '200\\|302\\|403'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    mem_reservation: 256m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
     restart: unless-stopped
 
 volumes:
