@@ -8,3 +8,4 @@ secret.yaml
 **/rndc.key
 **/tsig.key
 **/*.key
+.plans
