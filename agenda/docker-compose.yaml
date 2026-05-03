@@ -12,7 +12,7 @@ services:
       # gcal-agenda hardcodes ~/.config/gcal-agenda/{credentials,token}.json.
       # Container runs as root, so mount at /root/.config/gcal-agenda/.
       - ${SECRETS}/agenda.google.credentials.json:/root/.config/gcal-agenda/credentials.json:ro
-      - ${SECRETS}/agenda.google.token.json:/root/.config/gcal-agenda/token.json:ro
+      - ${SECRETS}/agenda.google.token.json:/root/.config/gcal-agenda/token.json
     networks:
       - frontend
     labels:
