@@ -9,3 +9,5 @@ secret.yaml
 **/tsig.key
 **/*.key
 .plans
+
+homepage/config/logs/

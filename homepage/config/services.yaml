@@ -1,0 +1,194 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/latest/configs/services
+
+- Media:
+    - Plex:
+        href: https://plex.in.rounds.house
+        icon: plex
+        widget:
+            type: plex
+            url: https://plex.in.rounds.house
+            key: {{HOMEPAGE_FILE_PLEX_KEY}} # see https://www.plexopedia.com/plex-media-server/general/plex-token/
+    - QBitTorrent:
+        href: https://torrent.in.rounds.house
+        icon: qbittorrent
+        widget:
+            type: qbittorrent
+            url: https://torrent.in.rounds.house
+            username: {{HOMEPAGE_FILE_QBITTORRENT_USERNAME}}
+            password: {{HOMEPAGE_FILE_QBITTORRENT_PASSWORD}}
+    - Prowlarr:
+        href: https://prowlarr.in.rounds.house
+        icon: prowlarr
+        widget:
+            type: prowlarr
+            url: https://prowlarr.in.rounds.house
+            key: {{HOMEPAGE_FILE_PROWLARR_KEY}}
+    - Radarr:
+        href: https://radarr.in.rounds.house
+        icon: sh-radarr-light
+        widget:
+            type: radarr
+            url: https://radarr.in.rounds.house
+            key: {{HOMEPAGE_FILE_RADARR_KEY}}
+            enableQueue: true # optional, defaults to false
+    - Radarr 4K:
+        href: https://radarr-4k.in.rounds.house
+        icon: sh-radarr-light
+        widget:
+            type: radarr
+            url: https://radarr-4k.in.rounds.house
+            key: {{HOMEPAGE_FILE_RADARR_4K_KEY}}
+            enableQueue: true # optional, defaults to false
+    - Sonarr:
+        href: https://sonarr.in.rounds.house
+        icon: sonarr
+        widget:
+            type: sonarr
+            url: https://sonarr.in.rounds.house
+            key: {{HOMEPAGE_FILE_SONARR_KEY}}
+            enableQueue: true # optional, defaults to false
+    - Sonarr 4K:
+        href: https://sonarr-4k.in.rounds.house
+        icon: sonarr
+        widget:
+            type: sonarr
+            url: https://sonarr-4k.in.rounds.house
+            key: {{HOMEPAGE_FILE_SONARR_4K_KEY}}
+            enableQueue: true # optional, defaults to false
+    - Bazarr:
+        href: https://bazarr.in.rounds.house
+        icon: bazarr
+        widget:
+            type: bazarr
+            url: https://bazarr.in.rounds.house
+            key: {{HOMEPAGE_FILE_BAZARR_KEY}}
+    - Bazarr 4K:
+        href: https://bazarr-4k.in.rounds.house
+        icon: bazarr
+        widget:
+            type: bazarr
+            url: https://bazarr-4k.in.rounds.house
+            key: {{HOMEPAGE_FILE_BAZARR_4K_KEY}}
+    - Overseerr:
+        href: https://overseerr.in.rounds.house
+        icon: overseerr
+        widget:
+            type: overseerr
+            url: https://overseerr.in.rounds.house
+            key: {{HOMEPAGE_FILE_OVERSEERR_KEY}}
+    - NZBHydra:
+        href: https://nzbhydra.in.rounds.house
+        icon: nzbhydra
+    - SABnzbd:
+        href: https://sabnzbd.in.rounds.house
+        icon: sabnzbd
+        widget:
+            type: sabnzbd
+            url: https://sabnzbd.in.rounds.house
+            key: {{HOMEPAGE_FILE_SABNZBD_KEY}}
+    - Tautulli:
+        href: https://tautulli.in.rounds.house
+        icon: tautulli
+    - Filebot Node:
+        href: http://filebot.in.rounds.house
+        icon: filebot
+        description: Filbot GUI for generating command
+    - Flexget:
+        href: http://flexget.in.rounds.house
+        icon: /icons/flex-get.png
+        description: Watches for new torrents to download
+    - FileBrowser:
+        href: https://filebrowser.in.rounds.house
+        icon: filebrowser
+
+- Docker:
+    - Portainer:
+        href: https://portainer.in.rounds.house
+        icon: portainer
+        widget:
+            type: portainer
+            url: https://portainer.in.rounds.house:9443
+            env: 1
+            key: {{HOMEPAGE_FILE_PORTAINER_KEY}}
+    - Code Server:
+        href: http://code.in.rounds.house
+        icon: vscode
+        description: Edit Docker volume contents
+    - Whats Up Docker?:
+        href: http://wud.in.rounds.house
+        icon: sh-whats-up-docker
+        widget:
+            type: whatsupdocker
+            url: https://wud.in.rounds.house
+    - Grafana:
+        href: https://grafana.in.rounds.house
+        icon: grafana
+        widget:
+            type: grafana
+            url: http://grafana.in.rounds.house:3003
+            username: {{HOMEPAGE_FILE_GRAFANA_USERNAME}}
+            password: {{HOMEPAGE_FILE_GRAFANA_PASSWORD}}
+    - Traefik:
+        href: https://traefik.in.rounds.house
+        icon: traefik
+        widget:
+            type: traefik
+            url: https://traefik.in.rounds.house
+    - PGAdmin:
+        href: https://pgadmin.in.rounds.house
+        icon: pgadmin
+
+- Server:
+    # - pve:
+    #     href: https://pve.in.rounds.house
+    #     icon: proxmox
+    #     widget:
+    #         type: proxmox
+    #         url: https://pve.in.rounds.house
+    #         username: {{HOMEPAGE_FILE_PVE_USERNAME}}
+    #         password: {{HOMEPAGE_FILE_PVE_PASSWORD}}
+    #         #node: pve-1 # optional
+    - Zima:
+        href: https://zima.in.rounds.house
+        icon: proxmox
+    - Mini:
+        href: https://mini.in.rounds.house
+        icon: proxmox
+    - Synology:
+        href: http://synology.in.rounds.house
+        icon: synology
+    - Unifi:
+        href: http://unifi.in.rounds.house
+        icon: unifi
+    #    widget:
+    #        type: unifi
+    #        url: https://unifi.in.rounds.house
+    #        username: api
+    #        password: {{HOMEPAGE_FILE_UNIFI_PASSWORD}}
+- Smart Home:
+    - Home Assistant:
+        href: http://ha.in.rounds.house
+        icon: home-assistant
+    - Node Red:
+        href: http://nodered.in.rounds.house
+        icon: node-red
+    - InfluxDB:
+        href: http://influxdb.in.rounds.house
+        icon: influxdb
+    - SLZB-06 - Zigbee Control Panel:
+        href: http://zigbee-controller.in.rounds.house
+        icon: /icons/smlight.png
+    - ZWaveJS: 
+        href: http://zwave.in.rounds.house
+        icon: zwavejs2mqtt
+    - Zigbee2MQTT:
+        href: http://zigbee.in.rounds.house
+        icon: zigbee2mqtt
+    - MQTTX:
+        href: http://mqttx.in.rounds.house
+        icon: /icons/mqttx.png
+    - MQTT Explorer:
+        href: http://mqtt-explorer.in.rounds.house
+        icon: /icons/mqtt-explorer.png

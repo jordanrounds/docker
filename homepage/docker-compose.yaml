@@ -15,6 +15,17 @@ services:
       HOMEPAGE_FILE_PVE_PASSWORD: /run/secrets/pve_password
       HOMEPAGE_FILE_GRAFANA_USERNAME: /run/secrets/grafana_username
       HOMEPAGE_FILE_GRAFANA_PASSWORD: /run/secrets/grafana_password
+      HOMEPAGE_FILE_PROWLARR_KEY: /run/secrets/prowlarr_key
+      HOMEPAGE_FILE_RADARR_KEY: /run/secrets/radarr_key
+      HOMEPAGE_FILE_RADARR_4K_KEY: /run/secrets/radarr_4k_key
+      HOMEPAGE_FILE_SONARR_KEY: /run/secrets/sonarr_key
+      HOMEPAGE_FILE_SONARR_4K_KEY: /run/secrets/sonarr_4k_key
+      HOMEPAGE_FILE_BAZARR_KEY: /run/secrets/bazarr_key
+      HOMEPAGE_FILE_BAZARR_4K_KEY: /run/secrets/bazarr_4k_key
+      HOMEPAGE_FILE_OVERSEERR_KEY: /run/secrets/overseerr_key
+      HOMEPAGE_FILE_SABNZBD_KEY: /run/secrets/sabnzbd_key
+      HOMEPAGE_FILE_UNIFI_USERNAME: /run/secrets/unifi_username
+      HOMEPAGE_FILE_UNIFI_PASSWORD: /run/secrets/unifi_password
     secrets:
       - portainer_key
       - qbittorrent_username
@@ -24,10 +35,21 @@ services:
       - pve_password
       - grafana_username
       - grafana_password
+      - prowlarr_key
+      - radarr_key
+      - radarr_4k_key
+      - sonarr_key
+      - sonarr_4k_key
+      - bazarr_key
+      - bazarr_4k_key
+      - overseerr_key
+      - sabnzbd_key
+      - unifi_username
+      - unifi_password
     ports:
       - '3001:3000'
     volumes:
-      - config:/app/config:rw
+      - ./config:/app/config:rw
       - ./icons:/app/public/icons
     networks:
       - frontend
@@ -54,10 +76,6 @@ services:
         compress: "true"
     restart: unless-stopped
 
-volumes:
-  config:
-    name: homepage_config
-
 networks:
   frontend:
     external: true
@@ -79,3 +97,25 @@ secrets:
     file: ${SECRETS}/grafana.username
   grafana_password:
     file: ${SECRETS}/grafana.password
+  prowlarr_key:
+    file: ${SECRETS}/homepage.prowlarr.key
+  radarr_key:
+    file: ${SECRETS}/homepage.radarr.key
+  radarr_4k_key:
+    file: ${SECRETS}/homepage.radarr-4k.key
+  sonarr_key:
+    file: ${SECRETS}/homepage.sonarr.key
+  sonarr_4k_key:
+    file: ${SECRETS}/homepage.sonarr-4k.key
+  bazarr_key:
+    file: ${SECRETS}/homepage.bazarr.key
+  bazarr_4k_key:
+    file: ${SECRETS}/homepage.bazarr-4k.key
+  overseerr_key:
+    file: ${SECRETS}/homepage.overseerr.key
+  sabnzbd_key:
+    file: ${SECRETS}/homepage.sabnzbd.key
+  unifi_username:
+    file: ${SECRETS}/homepage.unifi.username
+  unifi_password:
+    file: ${SECRETS}/homepage.unifi.password
