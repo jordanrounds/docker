@@ -10,10 +10,6 @@ services:
     volumes:
       - config:/config # code-server config
       - "${DOCKER}:/config/workspace/docker" # docker folders
-      - homepage_config:/config/workspace/docker-volumes/homepage_config
-      - flexget_config:/config/workspace/docker-volumes/flexget_config
-      - bind9_config:/config/workspace/docker-volumes/bind9_config
-      - bind9_cache:/config/workspace/docker-volumes/bind9_cache
       - qbittorrent_config:/config/workspace/docker-volumes/qbittorrent_config
     ports:
       - '8443:8443'
@@ -51,14 +47,6 @@ services:
 volumes:
   config:
     name: code-server_config
-  homepage_config:
-    external: true
-  flexget_config:
-    external: true
-  bind9_config:
-    external: true
-  bind9_cache:
-    external: true
   qbittorrent_config:
     external: true
 
