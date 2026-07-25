@@ -7,12 +7,14 @@ services:
       TZ: "${TZ}"
       NOTION_TOKEN: "${AGENDA_NOTION_TOKEN}"
     volumes:
-      - data:/app/agendas
-      - ${DOCKER}/agenda/.schedule.json:/app/.schedule.json
+      # App uses DATA_DIR=/data (set in the image): agendas -> /data/agendas,
+      # schedule -> /data/schedule.json. One named volume holds all persistent state.
+      - data:/data
       # gcal-agenda hardcodes ~/.config/gcal-agenda/{credentials,token}.json.
-      # Container runs as root, so mount at /root/.config/gcal-agenda/.
-      - ${SECRETS}/agenda.google.credentials.json:/root/.config/gcal-agenda/credentials.json:ro
-      - ${SECRETS}/agenda.google.token.json:/root/.config/gcal-agenda/token.json
+      # Container runs as USER node (uid 1000 == host jordan), so mount at
+      # /home/node/.config/. token.json is written on OAuth refresh (rw).
+      - ${SECRETS}/agenda.google.credentials.json:/home/node/.config/gcal-agenda/credentials.json:ro
+      - ${SECRETS}/agenda.google.token.json:/home/node/.config/gcal-agenda/token.json
     networks:
       - frontend
     labels:
