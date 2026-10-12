@@ -22,7 +22,7 @@ services:
       start_period: 30s
     security_opt:
       - no-new-privileges:true
-    mem_limit: 512m
+    mem_limit: 1g
     mem_reservation: 256m
     logging:
       driver: json-file
